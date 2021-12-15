@@ -21,8 +21,11 @@ if __name__ == '__main__':
     newDf = Data()
 
     # bar chart to test newDf
-    # TODO: figure out why this graph causes chrome to run out of memory
-    # fig = px.bar(newDf.df_nonull, x="accident_year", y="number_of_casualties", title="Deaths vs year bar chart test")
+    group = newDf.df_nonull.groupby('accident_year').agg({'number_of_casualties': 'mean'})
+
+    group = group.reset_index()
+
+    fig = px.bar(group, x="accident_year", y="number_of_casualties", title="Deaths vs year bar chart test")
 
     app.layout = html.Div(
         id="app-container",
@@ -40,8 +43,8 @@ if __name__ == '__main__':
                 className="nine columns",
                 children=[
                     # small test with bar chart
-                    # dcc.Graph(id="bar-chart",
-                    #           figure=fig)
+                    dcc.Graph(id="bar-chart",
+                              figure=fig)
                 ],
             ),
         ],
