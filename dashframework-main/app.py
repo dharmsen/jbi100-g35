@@ -2,7 +2,9 @@ from jbi100_app.main import app
 from jbi100_app.views.menu import make_menu_layout
 from jbi100_app.views.scatterplot import Scatterplot
 
-from dash import html
+from jbi100_app.data import Data
+
+from dash import html, dcc
 import plotly.express as px
 from dash.dependencies import Input, Output
 
@@ -14,6 +16,16 @@ if __name__ == '__main__':
     # Instantiate custom views
     scatterplot1 = Scatterplot("Scatterplot 1", 'sepal_length', 'sepal_width', df)
     scatterplot2 = Scatterplot("Scatterplot 2", 'petal_length', 'petal_width', df)
+
+    # Get data object, contains cleaned data frames
+    newDf = Data()
+
+    # bar chart to test newDf
+    group = newDf.df_nonull.groupby('accident_year').agg({'number_of_casualties': 'mean'})
+
+    group = group.reset_index()
+
+    fig = px.bar(group, x="accident_year", y="number_of_casualties", title="Deaths vs year bar chart test")
 
     app.layout = html.Div(
         id="app-container",
@@ -30,8 +42,9 @@ if __name__ == '__main__':
                 id="right-column",
                 className="nine columns",
                 children=[
-                    scatterplot1,
-                    scatterplot2
+                    # small test with bar chart
+                    dcc.Graph(id="bar-chart",
+                              figure=fig)
                 ],
             ),
         ],
