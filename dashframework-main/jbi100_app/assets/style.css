@@ -7,7 +7,8 @@ body {
 }
 
 #div-inside-span {
-
+    display: flex;
+    flex-direction: column;
 }
 
 /* Tooltip container */
@@ -19,44 +20,30 @@ body {
 /* Tooltip text */
 .tooltip .tooltiptext {
     visibility: hidden;
+
     /*TODO: check dimensions of tool tip*/
-    width: 250px;
+    width: 500px;
     background-color: #555;
     color: #fff;
     text-align: center;
     padding: 5px 0;
     border-radius: 6px;
 
-    /* Position the tooltip text */
+    /* Position the hovering filter panel */
     position: absolute;
     z-index: 1;
-    bottom: 60%;
+    bottom: -20%;
     left: 110%;
-    /*margin-left: -60px;*/
 
     /* Fade in tooltip */
     opacity: 0;
     transition: visibility 2s, opacity 0.3s;
 }
 
-/*!* Tooltip arrow *!*/
-/*.tooltip .tooltiptext::after {*/
-/*  content: "";*/
-/*  position: absolute;*/
-/*  top: 100%;*/
-/*  left: 50%;*/
-/*  margin-left: -5px;*/
-/*  border-width: 5px;*/
-/*  border-style: solid;*/
-/*  border-color: #555 transparent transparent transparent;*/
-/*}*/
-
-/* Show the tooltip text when you mouse over the tooltip container */
 .tooltip:hover .tooltiptext {
     visibility: visible;
     opacity: 1;
 }
-
 
 #side-bar {
     display: flex;
@@ -197,4 +184,26 @@ h5 {
     margin: 0 7px;
     padding-bottom: 7px;
     border-bottom: 1px solid #ccc;
+}
+
+.filter-global {
+    flex-grow: 3;
+}
+
+.filter-title-global {
+    flex-grow: 1;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+}
+
+.filter-title {
+    color: #fff;
+}
+
+#table-wrapper {
+    display: flex;
+    flex-direction: column;
 }

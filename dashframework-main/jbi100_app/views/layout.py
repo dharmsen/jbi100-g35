@@ -1,5 +1,5 @@
 from dash import dcc, html
-from jbi100_app.views.visControlPanel import generate_control_panel
+from jbi100_app.views.visControlPanel import generate_control_panel, generate_global_control_panel
 from jbi100_app.main import app
 from dash.dependencies import Input, Output
 
@@ -67,22 +67,43 @@ def generate_hover_over_control_panel(visId: int):
         className="tooltip",
         children=[
             html.Img(
+                className='picture',
                 # src="/assets/bootstrap-icons-1.7.2/clipboard-data.svg",
                 src="/assets/bootstrap-icons-1.7.2/file-earmark-bar-graph.svg",
-                alt="Bootstrap",
+                alt="Vis icon",
                 width="64",
                 height="64"
             ),
-            "Vis" + str(visId),
+            html.P('Filter Vis {}'.format(visId)),
             generate_control_panel(visId)
         ]
     )
 
-# Generates the side bar for main page
-def generate_side_bar():
+
+# Generates a panel that globally filters that dataset
+def generate_global_filtering_panel(range_filter_global_settings, date_filter_global_settings):
     return html.Div(
-        id="side-bar",
+        className='tooltip',
+        id='global-filter',
         children=[
+            html.Img(
+                # src="/assets/bootstrap-icons-1.7.2/clipboard-data.svg",
+                src="/assets/bootstrap-icons-1.7.2/globe.svg",
+                alt="Globe icon",
+                width="64",
+                height="64"
+            ),
+            html.P('Global Filters'),
+            generate_global_control_panel(range_filter_global_settings, date_filter_global_settings)
+        ]
+    )
+
+# Generates the side bar for main page
+def generate_side_bar(range_filter_global_settings, date_filter_global_settings):
+    return html.Div(
+        id='side-bar',
+        children=[
+            generate_global_filtering_panel(range_filter_global_settings, date_filter_global_settings),
             generate_hover_over_control_panel(1),
             generate_hover_over_control_panel(2),
             generate_hover_over_control_panel(3),
@@ -91,19 +112,22 @@ def generate_side_bar():
     )
 
 # Generates visualization container for main page
-def generate_vis_container():
+def generate_vis_container(table):
     return html.Div(
         id="vis-new-container",
         children=[
             html.Div(
                 className="visBox",
                 id="vis1",
-                children=["vis1"]
+                children=[
+                    #html.Div(graph)
+                    # graph
+                ]
             ),
             html.Div(
                 className="visBox",
                 id="vis2",
-                children=["vis2"]
+                children=["vis2", table]
             ),
             html.Div(
                 className="visBox",
@@ -119,20 +143,20 @@ def generate_vis_container():
     )
 
 
-def generate_new_layout():
+def generate_new_layout(range_filter_global_settings, date_filter_global_settings, table):
     return html.Div(
         id="vis",
         children=[
-            generate_side_bar(),
-            generate_vis_container()
+            generate_side_bar(range_filter_global_settings, date_filter_global_settings),
+            generate_vis_container(table)
         ]
     )
 
 # Quick test to see if control panel can send data to vis boxes (answer: yes they can)
 # Looks like each vis box will need its own callback function
-@app.callback(
-    Output("vis1", "children"),
-    Input("range-slider-1", "value")
-)
-def update_out_div(input_value):
-    return "Vis1: {}".format(input_value)
+# @app.callback(
+#     Output("vis1", "children"),
+#     Input("range-slider-1", "value")
+# )
+# def update_out_div(input_value):
+#     return "Vis1: {}".format(input_value)
