@@ -103,6 +103,12 @@ def generate_side_bar(range_filter_global_settings, date_filter_global_settings)
     return html.Div(
         id='side-bar',
         children=[
+            # TODO: add spinner to better place
+            dcc.Loading(
+                id="loading-1",
+                type="default",
+                children=html.Div(id="loading-output-1")
+            ),
             generate_global_filtering_panel(range_filter_global_settings, date_filter_global_settings),
             generate_hover_over_control_panel(1),
             generate_hover_over_control_panel(2),
@@ -112,22 +118,19 @@ def generate_side_bar(range_filter_global_settings, date_filter_global_settings)
     )
 
 # Generates visualization container for main page
-def generate_vis_container(table):
+def generate_vis_container(vis1, vis2):
     return html.Div(
         id="vis-new-container",
         children=[
             html.Div(
                 className="visBox",
                 id="vis1",
-                children=[
-                    #html.Div(graph)
-                    # graph
-                ]
+                children=[vis1]
             ),
             html.Div(
                 className="visBox",
                 id="vis2",
-                children=["vis2", table]
+                children=["vis2", vis2]
             ),
             html.Div(
                 className="visBox",
@@ -143,12 +146,12 @@ def generate_vis_container(table):
     )
 
 
-def generate_new_layout(range_filter_global_settings, date_filter_global_settings, table):
+def generate_new_layout(range_filter_global_settings, date_filter_global_settings, vis1, vis2):
     return html.Div(
         id="vis",
         children=[
             generate_side_bar(range_filter_global_settings, date_filter_global_settings),
-            generate_vis_container(table)
+            generate_vis_container(vis1, vis2)
         ]
     )
 
