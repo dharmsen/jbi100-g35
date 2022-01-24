@@ -3,65 +3,75 @@ import os.path
 import plotly.graph_objects as go
 from geojson import load, FeatureCollection
 import plotly.express as px
-import random
 from .map_helper import Map_Helper
+from dash import html, dcc
 
-def make_map(data):
 
-    # TODO: set this as a global variable
-    DATA_PATH = 'jbi100_app/assets/data/'
+"""
+    Creates a map visualization with built-in year slider to limit data points.
+"""
+class Map_Visualization():
 
-    # Check if geojson file exists
-    # if (os.path.exists(DATA_PATH + 'mapData.geojson'))
-    # geojson = Map_Helper(data)
+    def __init__(self, data, range_filter_global_settings):
+        # TODO: set this as a global variable
+        DATA_PATH = 'jbi100_app/assets/data/'
 
-    # with open('jbi100_app/assets/data/mapData.geojson') as f:
-    #     collection = load(f)
+        # TODO: decide if will use other map type with geojson
+        # Check if geojson file exists
+        # if (os.path.exists(DATA_PATH + 'mapData.geojson'))
+        # geojson = Map_Helper(data)
 
-    #collection = load('jbi100_app/assets/data/mapData.geojson')
+        # create figure
+        self.fig = self.create_figure(data)
+        self.range_filter_global_settings = range_filter_global_settings
 
-    # print(collection)
-    print(len(data))
-    data = data[:500000]
-    data['test'] = random.randrange(10)
-    data['new_index'] = str(data['accident_index'])
 
-    # fig = px.density_mapbox(data, lat='latitude', lon='longitude', z='test', radius=10,
-    #                         center=dict(lat=0, lon=180), zoom=0,
-    #                         mapbox_style="stamen-terrain")
-    # fig.show()
+    def create_figure(self, data):
+        fig = px.scatter_mapbox(data, lat="latitude", lon="longitude", color='number_of_vehicles',
+                                size='number_of_casualties',
+                                color_continuous_scale=px.colors.cyclical.IceFire, size_max=15, zoom=2)
 
-    # fig = px.choropleth(data, geojson=collection, color="test",
-    #                     locations="new_index", featureidkey="properties.accident_index",
-    #                     )
-    # fig.update_geos(fitbounds="locations", visible=False)
-    # fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
-    # fig.show()
+        # update fig
+        self.update_fig(fig)
+        return fig
 
-    # px.set_mapbox_access_token(open(".mapbox_token").read())
+    def update_fig(self, fig):
+        fig.update_layout(
+            mapbox_style="open-street-map",
+            margin=dict(l=5, r=5, t=5, b=5),
+        )
 
-    # df = px.data.carshare()
-    # fig = px.scatter_mapbox(data, lat="latitude", lon="longitude", size="test", #color="blue",
-    #                         color_continuous_scale=px.colors.cyclical.IceFire, size_max=15, zoom=10)
-    #
-    # fig.update_layout(
-    #     mapbox_style="open-street-map",
-    # )
 
-    data['size'] = 5
-    fig = px.scatter_mapbox(data, lat="latitude", lon="longitude", color='number_of_vehicles', size='number_of_casualties',#color='number_of_casualties', size='number_of_vehicles',
-                            color_continuous_scale=px.colors.cyclical.IceFire, size_max=15, zoom=10)
 
-    # fig = go.Figure(go.Scattermapbox(
-    #     lat=data["latitude"],
-    #     lon=data["longitude"],
-    #     mode="markers+text",
-    #     marker={"size": 10},
-    #     ))
-    #
-    fig.update_layout(
-        mapbox_style="open-street-map",
-    )
+    """
+        Returns div containing map vis with built in year slider.
+        This vis has a seperate year slider to improve performance.
+    """
+    def get_map_vis(self):
+        return html.Div(
+            id='map-container',
+            children=[
+                dcc.Graph(id='map', style={'height': '100%'}, figure=self.fig),
+                dcc.RangeSlider(
+                    id='map-range-slider',
+                    min=self.range_filter_global_settings['minYear'],
+                    max=self.range_filter_global_settings['maxYear'],
+                    step=2,
 
-    fig.show()
-    return fig
+                    # TODO: figure out how to only have a max distance of 3 between both handles
+                    marks={
+                        str(self.range_filter_global_settings['minYear']): {'label':
+                                                                           self.range_filter_global_settings[
+                                                                               'minYear'],
+                                                                       'style': {'color': '#fff'}},
+                        str(self.range_filter_global_settings['maxYear']): {'label':
+                                                                           self.range_filter_global_settings[
+                                                                               'maxYear'],
+                                                                       'style': {'color': '#fff'}},
+                    },
+                    value=[2019, 2020]
+                )
+            ]
+        )
+
+

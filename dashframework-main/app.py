@@ -3,7 +3,7 @@ from jbi100_app.views.menu import make_menu_layout
 from jbi100_app.views.scatterplot import Scatterplot
 from jbi100_app.data import Data
 from jbi100_app.visualizations.barchart import Barchart
-from jbi100_app.visualizations.map import make_map
+from jbi100_app.visualizations.map import Map_Visualization
 
 from jbi100_app.views.layout import generate_nav_bar, generate_basic_layout, generate_new_layout
 
@@ -42,42 +42,21 @@ table = html.Div(
             )
         )
 
+df_map = df_location.join(df_severity, rsuffix='_b')
+df_map = df_map.join(df_date, rsuffix='_c')
 
-map = html.Div(
-        children=[
-            dcc.Graph(id='map', style={'height': '100%'})
-        ]
-)
+print(df_map.columns)
 
-# test = make_map(df_location)
+# 500,000 nominal performance (probably best to stay here to ensure resources are left for other visualizations)
+# 750,000 not great performance
+# 1mil quite laggy
+# 3.7mil crashes (all rows)
+print('Starting map')
+# TODO configure best starting values
+m = Map_Visualization(df_map[(df_map['accident_year'] >= 2019) & (df_map['accident_year'] <= 2020)], range_filter_global_settings)
+map = m.get_map_vis()
+print('Map finished')
 
-
-from geojson import load
-from jbi100_app.visualizations.map_helper import Map_Helper
-
-
-
-# df_new = df_location.join(df_date, rsuffix='_b')
-df_new = df_location.join(df_severity, rsuffix='_b')
-
-# masker = (df_new['accident_year'] == 2020) | (df_new['accident_year'] == 2019)
-
-print(df_new.columns)
-
-m = make_map(df_new)
-
-# map_maker = Map_Helper(df_new[masker])
-# map_maker = Map_Helper(df_location)
-
-with open('jbi100_app/assets/data/mapData.geojson') as f:
-        collection = load(f)
-
-# mapy = dl.Map([
-#     dl.TileLayer(),
-#     dl.GeoJSON(data=collection, cluster=True, superClusterOptions={'minPoints': 10, 'minZoom': 0}),
-# ], center=(51.5, -0.1), zoom=1, style={'width': '100%', 'height': '50vh', 'margin': "auto", "display": "block"})
-mapy = None
-# cluster size needs some adjustments, zooming in immediately kills performance
 
 
 # Make simple barchart vis example
@@ -95,7 +74,7 @@ app.layout = html.Div(
             id="main",
             children=[
                 generate_nav_bar(),
-                generate_new_layout(range_filter_global_settings, date_filter_global_settings, simple_barchart, mapy)
+                generate_new_layout(range_filter_global_settings, date_filter_global_settings, simple_barchart, map)
             ]
         ),
     ],
@@ -134,14 +113,22 @@ def global_filter(year_range, time_range, vehicle_no, start_date, end_date):
 def update_simple_barchart(value):
     return 'Barchart loaded', simple_barchart.update()
 
-
-
+# Map callbacks
 @app.callback(
-    Output("map", "figure"),
-    Input('year-filter-global', 'value')
+    Output('map', 'figure'),
+    Input('map-range-slider', 'value')
 )
 def update_map(value):
-    return make_map(df_location)
+    # Filter copy of df_map for given dates
+    print('Year 1: ' + str(value[0]))
+    print('Year 2: ' + str(value[1]))
+    df_map_filtered = df_map[(df_map['accident_year'] >= value[0]) & (df_map['accident_year'] <= value[1])]
+
+    # TODO: figure out how to only render 500k rows max, maybe save number of rows for each year and
+    #  # TODO: then quick dictionary look up to make sure total is less than 500k, else just set year to next one up avoiding exceeding 500k
+
+    # TODO: add loading icon
+    return m.create_figure(df_map_filtered)
 
 
 if __name__ == '__main__':
