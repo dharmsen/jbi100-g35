@@ -3,6 +3,7 @@ from jbi100_app.views.menu import make_menu_layout
 from jbi100_app.views.scatterplot import Scatterplot
 from jbi100_app.data import Data
 from jbi100_app.visualizations.barchart import Barchart
+from jbi100_app.visualizations.map import make_map
 
 from jbi100_app.views.layout import generate_nav_bar, generate_basic_layout, generate_new_layout
 
@@ -12,7 +13,7 @@ from dash.dependencies import Input, Output
 import pandas as pd
 from datetime import date
 
-
+import dash_leaflet as dl
 
 # Get data by making a data object and getting the required dfs from it.
 # TODO: uncomment data object once in production, currently comment for quicker start up
@@ -20,10 +21,10 @@ from datetime import date
 # df_date, df_conditions, df_location, df_severity = data.get_dataframes()
 
 data = Data()
-df_date, df_severity = data.get_dataframes()
+df_date, df_severity, df_location = data.get_dataframes()
 
 # FIXME: accident_index col is killing the table
-df_date.drop('accident_index', inplace=True, axis=1)
+# df_date.drop('accident_index', inplace=True, axis=1)
 
 # Get filter settings
 range_filter_global_settings = data.get_range_filter_global_settings()
@@ -42,6 +43,43 @@ table = html.Div(
         )
 
 
+map = html.Div(
+        children=[
+            dcc.Graph(id='map', style={'height': '100%'})
+        ]
+)
+
+# test = make_map(df_location)
+
+
+from geojson import load
+from jbi100_app.visualizations.map_helper import Map_Helper
+
+
+
+# df_new = df_location.join(df_date, rsuffix='_b')
+df_new = df_location.join(df_severity, rsuffix='_b')
+
+# masker = (df_new['accident_year'] == 2020) | (df_new['accident_year'] == 2019)
+
+print(df_new.columns)
+
+m = make_map(df_new)
+
+# map_maker = Map_Helper(df_new[masker])
+# map_maker = Map_Helper(df_location)
+
+with open('jbi100_app/assets/data/mapData.geojson') as f:
+        collection = load(f)
+
+# mapy = dl.Map([
+#     dl.TileLayer(),
+#     dl.GeoJSON(data=collection, cluster=True, superClusterOptions={'minPoints': 10, 'minZoom': 0}),
+# ], center=(51.5, -0.1), zoom=1, style={'width': '100%', 'height': '50vh', 'margin': "auto", "display": "block"})
+mapy = None
+# cluster size needs some adjustments, zooming in immediately kills performance
+
+
 # Make simple barchart vis example
 # Join together for barchart
 df_merged = df_date.join(df_severity, lsuffix='_date', rsuffix='_severity')
@@ -57,7 +95,7 @@ app.layout = html.Div(
             id="main",
             children=[
                 generate_nav_bar(),
-                generate_new_layout(range_filter_global_settings, date_filter_global_settings, simple_barchart, table)
+                generate_new_layout(range_filter_global_settings, date_filter_global_settings, simple_barchart, mapy)
             ]
         ),
     ],
@@ -95,6 +133,15 @@ def global_filter(year_range, time_range, vehicle_no, start_date, end_date):
 )
 def update_simple_barchart(value):
     return 'Barchart loaded', simple_barchart.update()
+
+
+
+@app.callback(
+    Output("map", "figure"),
+    Input('year-filter-global', 'value')
+)
+def update_map(value):
+    return make_map(df_location)
 
 
 if __name__ == '__main__':

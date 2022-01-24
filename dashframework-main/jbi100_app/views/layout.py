@@ -125,7 +125,7 @@ def generate_vis_container(vis1, vis2):
             html.Div(
                 className="visBox",
                 id="vis1",
-                children=[vis1]
+                children=[]#vis1]
             ),
             html.Div(
                 className="visBox",
