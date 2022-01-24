@@ -2,3 +2,5 @@
 *.xml
 *.iml
 *.csv
+dashframework-main/jbi100_app/assets/data/mapData2.geojson
+dashframework-main/jbi100_app/assets/data/mapData.geojson
