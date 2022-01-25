@@ -314,3 +314,9 @@ h5 {
     height: 100%;
 }
 
+.drop-icon {
+    height: 100%;
+    width: 100%;
+    margin-top: -8px;
+}
+

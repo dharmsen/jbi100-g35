@@ -141,10 +141,9 @@ class Map_Visualization():
                                             children=[
                                                 html.P('Options'),
                                                 html.Img(
+                                                    className='drop-icon',
                                                     src="/assets/bootstrap-icons-1.7.2/caret-down-square.svg",
                                                     alt="Drop down icon",
-                                                    width="24",
-                                                    height="24"
                                                 ),
                                             ]
                                         )
