@@ -49,6 +49,8 @@ class Map_Visualization():
 
         # update fig
         self.update_fig(fig)
+
+
         return fig
 
     def update_fig(self, fig):
@@ -83,6 +85,7 @@ class Map_Visualization():
                           figure=self.fig),
 
 
+
                 # Define controls for map vis in this div
                 html.Div(
                     id='map-control-panel',
@@ -99,27 +102,27 @@ class Map_Visualization():
                                 str(self.range_filter_global_settings['minYear']): {'label':
                                                                                         self.range_filter_global_settings[
                                                                                             'minYear'],
-                                                                                    'style': {'color': '#fff'}},
+                                                                                    'style': {'color': '#000'}},
                                 str(self.range_filter_global_settings['maxYear']): {'label':
                                                                                         self.range_filter_global_settings[
                                                                                             'maxYear'],
-                                                                                    'style': {'color': '#fff'}},
+                                                                                    'style': {'color': '#000'}},
                             },
                             value=[2019, 2020],
                         ),
-                        html.Button(
-                            'Ok',
-                            id='map-ok-button',
-                            className='btn btn-primary',
-                        ),
+                        # html.Button(
+                        #     'Ok',
+                        #     id='map-ok-button',
+                        #     className='btn btn-primary',
+                        # ),
                         html.Div(
                           id='map-tool-tip',
-                          children=['Click this button to confirm '
-                                    'selection and filter map.']
+                          children=['Your current selection exceeds the performance '
+                                    'capabilites of this map. Please make a smaller '
+                                    'choice.']
                         ),
                         # Options drop down
                         html.Div(
-
                             id='map-options',
                             children=[
                                 # <input class="btn btn-primary" type="button" value="Input">
@@ -189,64 +192,6 @@ class Map_Visualization():
                                         ),
                                     ]
                                 )
-                                # Hack using check box instead of button to open hidden menu
-                                # dcc.Input(
-                                #     id='btnControl',
-                                #     type='checkbox'
-                                # ),
-                                # html.Label(
-                                #     id='btn',
-                                #     htmlFor='btnControl',
-                                #     children=[
-                                #         html.P('Options'),
-                                #         html.Img(
-                                #             src="/assets/bootstrap-icons-1.7.2/caret-down-square.svg",
-                                #             alt="Drop down icon",
-                                #             width="24",
-                                #             height="24"
-                                #         ),
-                                #         html.Div(
-                                #             id='map-hidden-panel',
-                                #             children=[
-                                #                 html.P('Choose which channels represent what data'),
-                                #                 html.Span(
-                                #                     className='drop-down-label',
-                                #                     children=[
-                                #                         html.P('Color: '),
-                                #                         dcc.Dropdown(
-                                #                             id='color-dropdown',
-                                #                             options=[
-                                #                                 # TODO: fill with options from df
-                                #                                 {'label': 'New York City', 'value': 'NYC'},
-                                #                                 {'label': 'Montreal', 'value': 'MTL'},
-                                #                                 {'label': 'San Francisco', 'value': 'SF'}
-                                #                             ],
-                                #                             value='NYC'
-                                #                         )
-                                #                     ]
-                                #                 ),
-                                #                 html.Span(
-                                #                     className='drop-down-label',
-                                #                     children=[
-                                #                         html.P('Size: '),
-                                #                         dcc.Dropdown(
-                                #                             id='size-dropdown',
-                                #                             options=[
-                                #                                 # TODO: fill with options from df
-                                #                                 {'label': 'New York City', 'value': 'NYC'},
-                                #                                 {'label': 'Montreal', 'value': 'MTL'},
-                                #                                 {'label': 'San Francisco', 'value': 'SF'}
-                                #                             ],
-                                #                             value='NYC'
-                                #                         )
-                                #                     ]
-                                #                 ),
-                                #             ]
-                                #         )
-                                #     ]
-                                # ),
-
-
                             ]
                         ),
                         # rows indicator
@@ -259,6 +204,16 @@ class Map_Visualization():
                                     children=['Data points loaded: '])
                             ]
                         ),
+                        # loading indicator
+                        html.Div(
+                            id='loading-wrapper',
+                            children=
+                                dcc.Loading(
+                                id="loading-1-1",
+                                type="default",
+                                style={'height': '100%'},
+                                ),
+                        )
                     ]
                 )
             ]

@@ -152,17 +152,19 @@ def check_size_old(startYear, endYear):
 @app.callback(
     Output('map-info', 'children'),
     Output('map-info', 'style'),
+    Output('map-tool-tip', 'style'),
     Input('map-range-slider', 'value')
 )
 def slider(value):
     size = compute_size(value[0], value[1])
     print("GOt: " + str(size))
     error_style_font = {'color': 'red'}
+    error_style_visibility = {'visibility': 'visible', 'opacity': '1'}
 
     if size > 500000:
-        return 'Data points loaded: EXCEEDED', error_style_font
+        return 'Data points loaded: EXCEEDED', error_style_font, error_style_visibility
     else:
-        return 'Data points loaded: %s' % size, {}
+        return 'Data points loaded: %s' % size, {}, {}
     # new_values = check_size_old(value[0], value[1])
     # message = 'Data points loaded: %s' % new_values[2]
     #
@@ -175,6 +177,7 @@ def slider(value):
 # Does actual map computing
 @app.callback(
     Output('map', 'figure'),
+    Output('loading-1-1', 'children'),
     Input('map-info', 'children'),
     Input('map-range-slider', 'value'),
     Input('color-dropdown', 'value'),
@@ -188,18 +191,11 @@ def do_map(txt, range, color_drop, size_drop):#, value):
         df_map_filtered = df_map[(df_map['accident_year'] >= range[0]) &
                                  (df_map['accident_year'] <= range[1])]
         print('Updating map!')
-        return m.create_figure(df_map_filtered, color_drop, size_drop)
+        return m.create_figure(df_map_filtered, color_drop, size_drop), ''
     else:
         # prevent update
         raise PreventUpdate
 
-
-@app.callback(
-    Output('map-ok-button', 'children'),
-    Input('map', 'figure')
-)
-def testy(fig):
-    return fig.is_loading
 
 @app.callback(
     Output('map-hidden-panel', 'style'),
