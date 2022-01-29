@@ -118,7 +118,7 @@ def generate_side_bar(range_filter_global_settings, date_filter_global_settings)
     )
 
 # Generates visualization container for main page
-def generate_vis_container(vis1, vis2):
+def generate_vis_container(vis1, vis2, vis3, vis4):
     return html.Div(
         id="vis-new-container",
         children=[
@@ -135,23 +135,23 @@ def generate_vis_container(vis1, vis2):
             html.Div(
                 className="visBox",
                 id="vis3",
-                children=["vis3"]
+                children=[vis3]
             ),
             html.Div(
                 className="visBox",
                 id="vis4",
-                children=["vis4"]
+                children=[vis4]
             ),
         ]
     )
 
 
-def generate_new_layout(range_filter_global_settings, date_filter_global_settings, vis1, vis2):
+def generate_new_layout(range_filter_global_settings, date_filter_global_settings, vis1, vis2, vis3, vis4):
     return html.Div(
         id="vis",
         children=[
             generate_side_bar(range_filter_global_settings, date_filter_global_settings),
-            generate_vis_container(vis1, vis2)
+            generate_vis_container(vis1, vis2, vis3, vis4)
         ]
     )
 

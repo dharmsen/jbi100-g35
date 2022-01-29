@@ -78,6 +78,15 @@ grouped = grouped.reset_index()
 
 simple_barchart = Barchart('accident_year', 'number_of_casualties', grouped)
 
+# Declare visualizations
+vis1 = simple_barchart
+
+vis2 = table
+
+vis3 = 'vis3'
+
+vis4 = 'vis4'
+
 app.layout = html.Div(
     id="app-container",
     children=[
@@ -85,7 +94,7 @@ app.layout = html.Div(
             id="main",
             children=[
                 generate_nav_bar(),
-                generate_new_layout(range_filter_global_settings, date_filter_global_settings, simple_barchart, map)
+                generate_new_layout(range_filter_global_settings, date_filter_global_settings, vis1, vis2, vis3, vis4)
             ]
         ),
     ],
