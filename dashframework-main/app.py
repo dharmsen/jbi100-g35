@@ -51,11 +51,11 @@ grouped = grouped.reset_index()
 simple_barchart = Barchart('accident_year', 'number_of_casualties', grouped)
 
 # Declare visualizations
-vis1 = simple_barchart
+vis1 = "simple_barchart not working"
 
-vis2 = table
+vis2 = "table not working"
 
-vis3 = 'vis3'
+vis3 = dcc.Graph(id="line-chart")
 
 vis4 = 'vis4'
 
@@ -71,6 +71,33 @@ app.layout = html.Div(
         ),
     ],
 )
+
+
+#df_line = the combination of df_join and df_severity
+df_line = df_date.join(df_severity, rsuffix='_b')
+#How many people die in total per year
+df_groupedbysum = df_line.groupby('accident_year').agg({'number_of_casualties' : 'sum'}).reset_index()
+
+@app.callback(
+    #First id is id of the element you want to play with
+    #Second id is the thing you want to modify
+    Output('line-chart', 'figure'),
+    Input('year-filter-global', 'value')
+)
+
+def line_chart(value):
+    #fig = px.line(df[], 
+    #    x="year", y="lifeExp", color='country')
+    fig = px.line(df_groupedbysum, 
+        x = "accident_year", y = "number_of_casualties", 
+              labels = {'number_of_casualties': 'Deaths', 'accident_year': 'year'}, 
+              range_y = [0, 350000])
+    return fig
+
+
+
+
+
 
 
 # Global filter callback function
