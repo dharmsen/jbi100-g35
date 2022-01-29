@@ -51,9 +51,9 @@ grouped = grouped.reset_index()
 simple_barchart = Barchart('accident_year', 'number_of_casualties', grouped)
 
 # Declare visualizations
-vis1 = "simple_barchart not working"
+vis1 = 'vis1'
 
-vis2 = "table not working"
+vis2 = 'vis2'
 
 vis3 = dcc.Graph(id="line-chart")
 
