@@ -22,7 +22,7 @@ class Data:
             print('Parquet files located, creating dataframes...')
 
             # TODO: commented for quicker start up
-            # self.df_conditions = pd.read_parquet(DATA_PATH + 'conditions.parquet')
+            self.df_conditions = pd.read_parquet(DATA_PATH + 'conditions.parquet')
             self.df_date = pd.read_parquet(DATA_PATH + 'date.parquet')
             # self.df_location = pd.read_parquet(DATA_PATH + 'location.parquet')
             self.df_severity = pd.read_parquet(DATA_PATH + 'severity.parquet')
