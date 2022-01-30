@@ -58,7 +58,7 @@ class Data:
     # Returns the four dataframes: conditions, date, location, severity
     def get_dataframes(self) -> pd.DataFrame:
         # TODO: commented for performance increase
-        return self.df_date, self.df_severity#, self.df_conditions, self.df_location
+        return self.df_date, self.df_severity, self.df_conditions#, self.df_location
 
     # Returns settings for slider, like mins and maxes
     def get_range_filter_global_settings(self) -> dict:
