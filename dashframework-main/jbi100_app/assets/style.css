@@ -207,3 +207,58 @@ h5 {
     display: flex;
     flex-direction: column;
 }
+
+.aux-pages {
+    display: flex;
+    flex-direction: column;
+    margin: 5rem;
+    padding: 2.5rem;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+#about-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 1rem;
+    gap: 3rem;
+    justify-content: space-around;
+}
+
+#about-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.about-image {
+    height: 300px;
+    width: 300px;
+}
+
+#about-card p {
+    text-align: justify;
+    text-overflow: clip;
+    width: 300px;
+}
+
+#help-container {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    gap: 3rem;
+}
+
+#help-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#help-card p {
+    text-align: justify;
+    text-overflow: clip;
+    width: 300px;
+}
