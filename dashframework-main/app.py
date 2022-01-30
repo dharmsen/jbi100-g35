@@ -53,8 +53,10 @@ simple_barchart = Barchart('accident_year', 'number_of_casualties', grouped)
 
 # Make stacked area chart
 df_merged_area = df_date.join(df_conditions, lsuffix='_date', rsuffix='_conditions')
-grouped_area = df_merged_area.groupby('accident_year').agg({'number_of_casualties' : 'count'})
-grouped_area = grouped_area.reset_index()
+grouped_area = df_merged_area.groupby('accident_year').size()
+grouped_area = grouped_area.reset_index(name='count')
+
+stacked_area_chart = StackedAreaChart('accident_year', 'count', 'weather_conditions', None, grouped_area)
 
 app.layout = html.Div(
     id="app-container",
@@ -99,8 +101,18 @@ def global_filter(year_range, time_range, vehicle_no, start_date, end_date):
     Output(simple_barchart.html_id, 'figure'),
     Input('year-filter-global', 'value') # dummy input, else callback doesn't work
 )
+
+@app.callback(
+    Output('loading-output-2', 'children'), # Loading indicator
+    Output(stacked_area_chart.html_id, 'figure'),
+    Input('year-filter-global', 'value')
+)
+
 def update_simple_barchart(value):
     return 'Barchart loaded', simple_barchart.update()
+
+def update_stacked_area_chart(value):
+    return 'Stacked area chart loaded', stacked_area_chart.update()
 
 
 if __name__ == '__main__':
