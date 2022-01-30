@@ -134,6 +134,7 @@ def global_filter(year_range, time_range, vehicle_no, start_date, end_date):
     Input('year-filter-global', 'value') # dummy input, else callback doesn't work
 )
 
+# Stacked bar chart
 @app.callback(
     Output('loading-output-2', 'children'), # Loading indicator
     Output(stacked_area_chart.html_id, 'figure'),
