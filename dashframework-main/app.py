@@ -4,7 +4,7 @@ from jbi100_app.views.scatterplot import Scatterplot
 from jbi100_app.data import Data
 from jbi100_app.visualizations.barchart import Barchart
 
-from jbi100_app.views.layout import generate_nav_bar, generate_basic_layout, generate_new_layout
+from jbi100_app.views.layout import generate_help_layout, generate_about_layout, generate_nav_bar, generate_basic_layout, generate_new_layout
 
 from dash import html, dcc, dash_table
 import plotly.express as px
@@ -66,11 +66,35 @@ app.layout = html.Div(
             id="main",
             children=[
                 generate_nav_bar(),
-                generate_new_layout(range_filter_global_settings, date_filter_global_settings, vis1, vis2, vis3, vis4)
+                # main div that holds all content
+                html.Div(
+                    id='vis-main'
+                )
             ]
         ),
     ],
 )
+
+main_page_layout = generate_new_layout(range_filter_global_settings, date_filter_global_settings, vis1, vis2, vis3, vis4)
+#
+#
+about_layout = generate_about_layout()
+help_layout = generate_help_layout()
+#
+# Update the index
+@app.callback(Output('vis-main', 'children'),
+              [Input('url', 'pathname')])
+
+def display_page(pathname):
+    if pathname == '/about':
+        return about_layout
+    elif pathname == '/help':
+        return help_layout
+    elif pathname == '/':
+        return main_page_layout
+    else:
+        # handle not known URL
+        return html.H1("Error 404: page not found.", style={'color': 'red'})
 
 
 # Global filter callback function
