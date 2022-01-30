@@ -3,6 +3,7 @@ from jbi100_app.views.menu import make_menu_layout
 from jbi100_app.views.scatterplot import Scatterplot
 from jbi100_app.data import Data
 from jbi100_app.visualizations.barchart import Barchart
+from jbi100_app.visualizations.stackedareachart import StackedAreaChart
 
 from jbi100_app.views.layout import generate_nav_bar, generate_basic_layout, generate_new_layout
 
@@ -20,7 +21,7 @@ from datetime import date
 # df_date, df_conditions, df_location, df_severity = data.get_dataframes()
 
 data = Data()
-df_date, df_severity = data.get_dataframes()
+df_date, df_severity, df_conditions = data.get_dataframes()
 
 # FIXME: accident_index col is killing the table
 df_date.drop('accident_index', inplace=True, axis=1)
@@ -49,6 +50,11 @@ grouped = df_merged.groupby('accident_year').agg({'number_of_casualties': 'mean'
 grouped = grouped.reset_index()
 
 simple_barchart = Barchart('accident_year', 'number_of_casualties', grouped)
+
+# Make stacked area chart
+df_merged_area = df_date.join(df_conditions, lsuffix='_date', rsuffix='_conditions')
+grouped_area = df_merged_area.groupby('accident_year').agg({'number_of_casualties' : 'count'})
+grouped_area = grouped_area.reset_index()
 
 app.layout = html.Div(
     id="app-container",
