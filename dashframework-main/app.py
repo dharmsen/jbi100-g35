@@ -50,8 +50,33 @@ grouped = grouped.reset_index()
 
 simple_barchart = Barchart('accident_year', 'number_of_casualties', grouped)
 
+df = pd.read_csv("/proba.csv")
+df_speed = pd.read_csv("/speedlimit.csv")
+#app = dash.Dash(__name__)
+
+vis1 = html.Div([
+    html.Div([
+            dcc.Dropdown(
+                id='color',
+                options=[ {'label': 'Speed limit', 'value': 'speed'},
+                          {'label': 'Count of accidents', 'value': 'count' }],
+                value='count'
+            ),
+        ], style={'width': '48%', 'display': 'inline-block'}),
+    dcc.Graph(id='graph'),
+    dcc.RangeSlider(
+        id='year_slider',
+        min=df['accident_year'].min(),
+        max=df['accident_year'].max(),
+        value=[1979,2020],
+        step = 1,
+        tooltip={"placement": "bottom", "always_visible": True}
+    ),
+])
+
+
 # Declare visualizations
-vis1 = 'vis1'
+#vis1 = 'vis1'
 
 vis2 = 'vis2'
 
@@ -130,5 +155,38 @@ def update_simple_barchart(value):
     return 'Barchart loaded', simple_barchart.update()
 
 
+#create heatmap
+@app.callback(
+    Output('graph','figure'),
+    Input('year_slider', 'value'),
+    Input('color', 'value'))
+def update_figure(value,color):
+    if (color == "count"):
+        filterdf = df[(df['accident_year'] <= value[1]) & (df['accident_year'] >= value[0])]
+        filterdf = filterdf.pivot_table('count','accident_year', 'weekNum')
+    else:
+        filterdf = df_speed[(df_speed['accident_year'] <= value[1]) & (df_speed['accident_year'] >= value[0])]
+        filterdf = filterdf.pivot_table('speed_limit','accident_year', 'weekNum')
+    fig =  px.imshow(filterdf,color_continuous_scale=px.colors.sequential.Bluyl)
+    fig.update_yaxes(title = "Accident Year")
+    fig.update_xaxes(title = "Week number")
+    if(color == "count"):
+        fig.update_traces(hoverongaps=False,
+                      hovertemplate="Accident Year: %{y}"
+                                    "<br>Week number: %{x}"
+                                    "<br>Number of accidents: %{z}<extra></extra>"
+                      )
+    else: 
+        fig.update_traces(hoverongaps=False,
+                  hovertemplate="Accident Year: %{y}"
+                                "<br>Week number: %{x}"
+                                "<br>Average Speed Limit: %{z}<extra></extra>"
+                  )
+    fig.update_layout(transition_duration=500)
+    return fig
+
+
+
 if __name__ == '__main__':
     app.run_server(debug=False, host='0.0.0.0')  # why debug not working :(
+
