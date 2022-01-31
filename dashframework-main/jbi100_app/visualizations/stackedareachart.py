@@ -15,7 +15,7 @@ class StackedAreaChart(html.Div):
         self.color = color
         self.line_group = line_group
         self.title= title
-        self.update(self.color)
+        self.update(self.color, self.df)
 
         # Equivalent to `html.Div([...])`
         super().__init__(
@@ -30,27 +30,34 @@ class StackedAreaChart(html.Div):
                         style={'height': '10%'},
                         options=[
                             {'label': 'Weather conditions', 'value': 'weather_conditions'},
-                            {'label': 'Maneuver type', 'value': 'vehicle_manoevre'}
-                        ]
+                            {'label': 'Manoeuvre type', 'value': 'vehicle_manoeuvre'}
+                        ],
+                        value=self.color,
+                        clearable=False,
+                        searchable=False
                     )
                 ]
             )
         )
 
-    def update(self, column):
+    def update(self, column, df):
         if column == 'weather_conditions':
             self.feature_y = 'count_weather'
             self.color = 'weather_conditions'
             self.title = 'Weather Conditions'
-        elif column == 'vehicle_manoevre':
-            self.feature_y = 'count_maneuver'
-            self.color = 'vehicle_manoevre'
-            self.title='Maneuver Type'
+        elif column == 'vehicle_manoeuvre':
+            self.feature_y = 'count_manoeuvre'
+            self.color = 'vehicle_manoeuvre'
+            self.title= 'Manoeuvre Type'
+
+        self.df = df
             
         self.fig = px.area(self.df
                             , x=self.feature_x
                             , y=self.feature_y
                             , color=self.color
                             , line_group=self.line_group
-                            , title=self.title)
+                            , title=self.title
+                            , labels={self.feature_x: 'Year',
+                            self.feature_y: 'Accident Count'})
         return self.fig
