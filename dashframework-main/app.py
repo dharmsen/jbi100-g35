@@ -28,7 +28,7 @@ import dash_leaflet as dl
 data = Data()
 
 # FIXME: check imports
-df_date, df_severity, df_conditions, df_heatmap, df_heatmap_speeds = data.get_dataframes()
+df_date, df_severity, df_conditions, df_location, df_heatmap, df_heatmap_speeds = data.get_dataframes()
 
 
 # FIXME: accident_index col is killing the table
@@ -52,9 +52,8 @@ table = html.Div(
 
 df_map = df_location.join(df_severity, rsuffix='_b')
 df_map = df_map.join(df_date, rsuffix='_c')
+df_map['hour_time'] = pd.to_datetime(df_map['time'], format='%H:%M').dt.hour
 
-
-print(df_map.columns)
 
 # Computes data points per year, used for ensuring not too many data points on map
 
@@ -97,8 +96,9 @@ stacked_area_chart = StackedAreaChart('accident_year', 'count', 'weather_conditi
 
 # Declare visualizations
 vis1 = heatmap.get_heatmap()
+print(vis1)
 
-vis2 = 'vis2'
+vis2 = map
 
 vis3 = 'vis3'
 
@@ -145,7 +145,6 @@ def display_page(pathname):
 def compute_size(startYear, endYear):
     total = 0
     years = list(range(startYear, endYear + 1))
-    print(years)
     for year in years:
         total += yearCount[year]
 
@@ -162,7 +161,7 @@ def check_size_old(startYear, endYear):
     years = list(range(startYear, endYear + 1))
     total = compute_size(startYear, endYear)
 
-    print("Total at start: " + str(total))
+    # print("Total at start: " + str(total))
     # If more than 500k reduce by 1 year and check again
     if total > 500000:
         # generate flipping pattern to cut list from front and back
@@ -175,11 +174,9 @@ def check_size_old(startYear, endYear):
                 flipping.append(i*-1)
                 flipping.append(i)
 
-        print(flipping)
         toRemove = []
         for i in flipping:
             if total > 500000:
-                print("Removed: " + str(years[i]))
                 total -= yearCount[years[i]]
                 toRemove.append(years[i])
             else:
@@ -190,11 +187,9 @@ def check_size_old(startYear, endYear):
             years.remove(year)
 
         new_range = [years[0], years[1], total]
-        print("Left with: " + str(total))
         print(new_range)
         return new_range
 
-    print("Left with: " + str(total))
     print([startYear, endYear])
     return [startYear, endYear, total]
 
@@ -206,8 +201,9 @@ def check_size_old(startYear, endYear):
     Input('map-range-slider', 'value')
 )
 def slider(value):
+    # FIXME: computation of size here is invalid!!
     size = compute_size(value[0], value[1])
-    print("GOt: " + str(size))
+    # print("Got: " + str(size))
     error_style_font = {'color': 'red'}
     error_style_visibility = {'visibility': 'visible', 'opacity': '1'}
 
@@ -230,17 +226,22 @@ def slider(value):
     Output('loading-1-1', 'children'),
     Input('map-info', 'children'),
     Input('map-range-slider', 'value'),
+    Input('time-filter-global', 'value'),
     Input('color-dropdown', 'value'),
     Input('size-dropdown', 'value'),
     # Input("loading-input-1-1", "value")
 )
 # Output("loading-output-1", "children"), Input("loading-input-1", "value")
-def do_map(txt, range, color_drop, size_drop):#, value):
-
+def do_map(txt, range, time_range, color_drop, size_drop):#, value):
+    print(time_range)
     if txt != 'Data points loaded: EXCEEDED':
         df_map_filtered = df_map[(df_map['accident_year'] >= range[0]) &
-                                 (df_map['accident_year'] <= range[1])]
+                                 (df_map['accident_year'] <= range[1]) &
+                                 (df_map['hour_time'] >= time_range[0]) &
+                                 (df_map['hour_time'] <= time_range[1])
+                                 ]
         print('Updating map!')
+
         return m.create_figure(df_map_filtered, color_drop, size_drop), ''
     else:
         # prevent update
@@ -278,6 +279,7 @@ def openOptions(value):
 @app.callback(
     # Output('loading-output-1', 'figure'), # FIXME: temp output
     Output('heatmap-graph', 'figure'), # heatmap output
+    Output('map-range-slider', 'value'), # map range updater
     Input('year-filter-global', 'value'),
     Input('time-filter-global', 'value'),
     Input('vehicles-slider-global', 'value'),
@@ -287,7 +289,7 @@ def openOptions(value):
     Input('color', 'value')
 )
 def global_filter(year_range, time_range, vehicle_no, start_date, end_date, heatmap_year, heatmap_color):
-    print(year_range, time_range, vehicle_no, start_date, end_date)
+    # print(year_range, time_range, vehicle_no, start_date, end_date)
 
     # this table takes 2 business days to get rendered
     # mask = (df_date['accident_year'] >= year_range[0]) & (df_date['accident_year'] <= year_range[1])
@@ -300,7 +302,9 @@ def global_filter(year_range, time_range, vehicle_no, start_date, end_date, heat
     # global year range is used right now
     heatmap = update_figure(year_range, heatmap_color)
 
-    return heatmap
+    map_range = check_size_old(year_range[0], year_range[1])[:2]
+
+    return heatmap, map_range
 
 
 # Heatmap updater
