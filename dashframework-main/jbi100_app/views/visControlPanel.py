@@ -3,27 +3,28 @@ from jbi100_app.main import app
 from dash.dependencies import Input, Output
 from datetime import date
 
+from jbi100_app.visualizations.heatmap import HeatMap
+
+
 # Stores visualization control panels that pop up when user hovers over vis icons.
 
 # Generates the control panel that appears when user hovers over vis icons.
 def generate_control_panel(visId: int):
     # TODO: add custom behaviour depending on visId
+
+    # Not the best since hardcoding each position for each vis
+    controls = 'Controls go here.'
+    if visId == 1:
+        heatmap = HeatMap(1979, 2020)
+        controls = heatmap.get_heatmap_controls()
+
     return html.Span(
         className="tooltiptext",
         children=[
             html.Div(
                 className="div-inside-span",
                 children=[
-                    "components",
-                    dcc.RangeSlider(
-                        className='my-range-slider',
-                        id="range-slider-"+str(visId),
-                        min=0,
-                        max=20,
-                        step=0.5,
-                        value=[5, 15]
-                    ),
-                    html.Div(id="output-"+str(visId))
+                    controls
                 ]
             )
         ]
