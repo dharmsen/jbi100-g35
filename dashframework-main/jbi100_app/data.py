@@ -17,15 +17,21 @@ class Data:
         if os.path.exists(DATA_PATH + 'location.parquet') and \
                 os.path.exists(DATA_PATH + 'date.parquet') and \
                 os.path.exists(DATA_PATH + 'conditions.parquet') and \
-                os.path.exists(DATA_PATH + 'severity.parquet'):
+                os.path.exists(DATA_PATH + 'severity.parquet') and \
+                os.path.exists(DATA_PATH + 'heatmapData.parquet') and \
+                os.path.exists(DATA_PATH + 'heatmapDataSpeeds.parquet'):
 
             print('Parquet files located, creating dataframes...')
 
             # TODO: commented for quicker start up
-            # self.df_conditions = pd.read_parquet(DATA_PATH + 'conditions.parquet')
+            self.df_conditions = pd.read_parquet(DATA_PATH + 'conditions.parquet')
             self.df_date = pd.read_parquet(DATA_PATH + 'date.parquet')
-            # self.df_location = pd.read_parquet(DATA_PATH + 'location.parquet')
+            self.df_location = pd.read_parquet(DATA_PATH + 'location.parquet')
             self.df_severity = pd.read_parquet(DATA_PATH + 'severity.parquet')
+
+            # Heatmaps things
+            self.df_heatmap = pd.read_parquet(DATA_PATH + 'heatmapData.parquet')
+            self.df_heatmap_speeds = pd.read_parquet(DATA_PATH + 'heatmapDataSpeeds.parquet')
 
         else:
             # If files are missing, must create them
@@ -55,10 +61,21 @@ class Data:
             self.df_conditions.to_parquet('{}conditions.parquet'.format(DATA_PATH), engine='fastparquet')
             self.df_severity.to_parquet('{}severity.parquet'.format(DATA_PATH), engine='fastparquet')
 
+
+            # heat maps data
+            self.df_heatmap = pd.read_csv(DATA_PATH + 'heatmap.csv')
+            self.df_heatmap_speeds = pd.read_csv(DATA_PATH + 'heatmapspeedlimit.csv')
+
+            self.df_heatmap.to_parquet('{}heatmapData.parquet'.format(DATA_PATH), engine='fastparquet')
+            self.df_heatmap_speeds.to_parquet('{}heatmapDataSpeeds.parquet'.format(DATA_PATH), engine='fastparquet')
+
+
+
     # Returns the four dataframes: conditions, date, location, severity
     def get_dataframes(self) -> pd.DataFrame:
         # TODO: commented for performance increase
-        return self.df_date, self.df_severity#, self.df_conditions, self.df_location
+        return self.df_date, self.df_severity, self.df_heatmap, self.df_heatmap_speeds
+        # return self.df_date, self.df_severity#, self.df_conditions, self.df_location
 
     # Returns settings for slider, like mins and maxes
     def get_range_filter_global_settings(self) -> dict:
