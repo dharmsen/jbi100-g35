@@ -57,12 +57,10 @@ grouped_area_cond = df_merged_area_cond.groupby(['accident_year', 'weather_condi
 grouped_area_cond = grouped_area_cond.reset_index(name='count_weather')
 
 df_merged_area_manu = df_date.join(df_severity, lsuffix='_date', rsuffix='_severity')
-grouped_area_manu = df_merged_area_manu.groupby(['accident_year', 'maneuver_type']).size()
-grouped_area_manu = grouped_area_manu.reset_index(name='count_maneuver')
+grouped_area_manu = df_merged_area_manu.groupby(['accident_year', 'vehicle_manoeuvre']).size()
+grouped_area_manu = grouped_area_manu.reset_index(name='count_manoeuvre')
 
-df_merged_area = grouped_area_manu.join(grouped_area_cond)
-
-stacked_area_chart = StackedAreaChart('accident_year', 'count_weather', 'weather_conditions', None, df_merged_area, 'Weather Conditions')
+stacked_area_chart = StackedAreaChart('accident_year', 'count_weather', 'weather_conditions', None, grouped_area_cond, 'Weather Conditions')
 # Declare visualizations
 vis1 = 'vis1'
 
@@ -151,7 +149,10 @@ def global_filter(year_range, time_range, vehicle_no, start_date, end_date):
 )
 
 def update_stacked_area_chart(value, area_select_dropdown):
-    return stacked_area_chart.update()
+    if area_select_dropdown == 'weather_conditions':
+        return stacked_area_chart.update(area_select_dropdown, grouped_area_cond)
+    elif area_select_dropdown == 'vehicle_manoeuvre':
+        return stacked_area_chart.update(area_select_dropdown, grouped_area_manu)
 
 
 if __name__ == '__main__':
