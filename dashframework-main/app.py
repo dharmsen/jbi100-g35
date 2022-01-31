@@ -52,11 +52,17 @@ grouped = grouped.reset_index()
 simple_barchart = Barchart('accident_year', 'number_of_casualties', grouped)
 
 # Make stacked area chart
-df_merged_area = df_date.join(df_conditions, lsuffix='_date', rsuffix='_conditions')
-grouped_area = df_merged_area.groupby('accident_year').size()
-grouped_area = grouped_area.reset_index(name='count')
+df_merged_area_cond = df_date.join(df_conditions, lsuffix='_date', rsuffix='_conditions')
+grouped_area_cond = df_merged_area_cond.groupby(['accident_year', 'weather_conditions']).size()
+grouped_area_cond = grouped_area_cond.reset_index(name='count_weather')
 
-stacked_area_chart = StackedAreaChart('accident_year', 'count', 'weather_conditions', None, grouped_area)
+df_merged_area_manu = df_date.join(df_severity, lsuffix='_date', rsuffix='_severity')
+grouped_area_manu = df_merged_area_manu.groupby(['accident_year', 'maneuver_type']).size()
+grouped_area_manu = grouped_area_manu.reset_index(name='count_maneuver')
+
+df_merged_area = grouped_area_manu.join(grouped_area_cond)
+
+stacked_area_chart = StackedAreaChart('accident_year', 'count_weather', 'weather_conditions', None, df_merged_area, 'Weather Conditions')
 # Declare visualizations
 vis1 = 'vis1'
 
@@ -64,7 +70,7 @@ vis2 = 'vis2'
 
 vis3 = 'vis3'
 
-vis4 = 'vis4'
+vis4 = stacked_area_chart
 
 app.layout = html.Div(
     id="app-container",
@@ -128,24 +134,24 @@ def global_filter(year_range, time_range, vehicle_no, start_date, end_date):
 
 # Create visualizations
 # Simple bar chart
-@app.callback(
-    Output('loading-output-1', 'children'), # Loading indicator
-    Output(simple_barchart.html_id, 'figure'),
-    Input('year-filter-global', 'value') # dummy input, else callback doesn't work
-)
+# @app.callback(
+#     Output('loading-output-1', 'children'), # Loading indicator
+#     Output(simple_barchart.html_id, 'figure'),
+#     Input('year-filter-global', 'value') # dummy input, else callback doesn't work
+# )
+
+# def update_simple_barchart(value):
+#     return 'Barchart loaded', simple_barchart.update()
 
 # Stacked bar chart
 @app.callback(
-    Output('loading-output-2', 'children'), # Loading indicator
-    Output(stacked_area_chart.html_id, 'figure'),
-    Input('year-filter-global', 'value')
+    Output('stacked-area-chart', 'figure'),
+    Input('year-filter-global', 'value'),
+    Input('area_select_dropdown', 'value')
 )
 
-def update_simple_barchart(value):
-    return 'Barchart loaded', simple_barchart.update()
-
-def update_stacked_area_chart(value):
-    return 'Stacked area chart loaded', stacked_area_chart.update()
+def update_stacked_area_chart(value, area_select_dropdown):
+    return stacked_area_chart.update()
 
 
 if __name__ == '__main__':
