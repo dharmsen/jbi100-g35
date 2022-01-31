@@ -3,7 +3,10 @@ from jbi100_app.views.menu import make_menu_layout
 from jbi100_app.views.scatterplot import Scatterplot
 from jbi100_app.data import Data
 from jbi100_app.visualizations.barchart import Barchart
+
+from jbi100_app.visualizations.heatmap import HeatMap
 from jbi100_app.visualizations.stackedareachart import StackedAreaChart
+
 
 from jbi100_app.views.layout import generate_help_layout, generate_about_layout, generate_nav_bar, generate_basic_layout, generate_new_layout
 
@@ -21,7 +24,10 @@ from datetime import date
 # df_date, df_conditions, df_location, df_severity = data.get_dataframes()
 
 data = Data()
-df_date, df_severity, df_conditions = data.get_dataframes()
+
+# FIXME: check imports
+df_date, df_severity, df_conditions, df_heatmap, df_heatmap_speeds = data.get_dataframes()
+
 
 # FIXME: accident_index col is killing the table
 df_date.drop('accident_index', inplace=True, axis=1)
@@ -51,14 +57,18 @@ grouped = grouped.reset_index()
 
 simple_barchart = Barchart('accident_year', 'number_of_casualties', grouped)
 
+# Make heat map
+heatmap = HeatMap(df_heatmap['accident_year'].min(), df_heatmap['accident_year'].max())
+
 # Make stacked area chart
 df_merged_area = df_date.join(df_conditions, lsuffix='_date', rsuffix='_conditions')
 grouped_area = df_merged_area.groupby('accident_year').size()
 grouped_area = grouped_area.reset_index(name='count')
 
 stacked_area_chart = StackedAreaChart('accident_year', 'count', 'weather_conditions', None, grouped_area)
+
 # Declare visualizations
-vis1 = 'vis1'
+vis1 = heatmap.get_heatmap()
 
 vis2 = 'vis2'
 
@@ -106,33 +116,60 @@ def display_page(pathname):
 
 # Global filter callback function
 @app.callback(
-    Output('table', 'columns'), # TODO: only changing current table, will need to change to other vis' i think
-    Output('table', 'data'),
+    # Output('loading-output-1', 'figure'), # FIXME: temp output
+    Output('heatmap-graph', 'figure'), # heatmap output
     Input('year-filter-global', 'value'),
     Input('time-filter-global', 'value'),
     Input('vehicles-slider-global', 'value'),
     Input('date-picker-global', 'start_date'),
     Input('date-picker-global', 'end_date'),
+    Input('year_slider', 'value'),
+    Input('color', 'value')
 )
-def global_filter(year_range, time_range, vehicle_no, start_date, end_date):
+def global_filter(year_range, time_range, vehicle_no, start_date, end_date, heatmap_year, heatmap_color):
     print(year_range, time_range, vehicle_no, start_date, end_date)
 
     # this table takes 2 business days to get rendered
-    mask = (df_date['accident_year'] >= year_range[0]) & (df_date['accident_year'] <= year_range[1])
-    df_filtered = df_date[mask]
+    # mask = (df_date['accident_year'] >= year_range[0]) & (df_date['accident_year'] <= year_range[1])
+    # df_filtered = df_date[mask]
 
-    columns = [{"name": i, "id": i} for i in df_filtered.columns]
-    data = df_filtered.to_dict('records')
+    # columns = [{"name": i, "id": i} for i in df_filtered.columns]
+    # data = df_filtered.to_dict('records')
     # return '{}, {}, {}, {}, {}'.format(year_range, time_range, vehicle_no, start_date, end_date)
-    return columns, data
 
-# Create visualizations
-# Simple bar chart
-@app.callback(
-    Output('loading-output-1', 'children'), # Loading indicator
-    Output(simple_barchart.html_id, 'figure'),
-    Input('year-filter-global', 'value') # dummy input, else callback doesn't work
-)
+    # global year range is used right now
+    heatmap = update_figure(year_range, heatmap_color)
+
+    return heatmap
+
+
+# Heatmap updater
+def update_figure(value, color):
+    if color == 'count':
+        filtered_df = df_heatmap[(df_heatmap['accident_year'] <= value[1]) & (df_heatmap['accident_year'] >= value[0])]
+        filtered_df = filtered_df.pivot_table('count', 'accident_year', 'weekNum')
+    else:
+        filtered_df = df_heatmap_speeds[(df_heatmap_speeds['accident_year'] <= value[1]) & (df_heatmap_speeds['accident_year'] >= value[0])]
+        filtered_df = filtered_df.pivot_table('speed_limit', 'accident_year', 'weekNum')
+
+    fig = px.imshow(filtered_df,color_continuous_scale=px.colors.sequential.Bluyl, title='Heat Map')
+    fig.update_yaxes(title='Accident Year')
+    fig.update_xaxes(title='Week number')
+    if(color == "count"):
+        fig.update_traces(hoverongaps=False,
+                      hovertemplate="Accident Year: %{y}"
+                                    "<br>Week number: %{x}"
+                                    "<br>Number of accidents: %{z}<extra></extra>"
+                      )
+    else:
+        fig.update_traces(hoverongaps=False,
+                  hovertemplate="Accident Year: %{y}"
+                                "<br>Week number: %{x}"
+                                "<br>Average Speed Limit: %{z}<extra></extra>"
+                  )
+    fig.update_layout(transition_duration=500, margin=dict(l=5, r=5, t=35, b=5))
+    return fig
+
 
 # Stacked bar chart
 @app.callback(
@@ -141,12 +178,10 @@ def global_filter(year_range, time_range, vehicle_no, start_date, end_date):
     Input('year-filter-global', 'value')
 )
 
-def update_simple_barchart(value):
-    return 'Barchart loaded', simple_barchart.update()
-
 def update_stacked_area_chart(value):
     return 'Stacked area chart loaded', stacked_area_chart.update()
 
 
 if __name__ == '__main__':
     app.run_server(debug=False, host='0.0.0.0')  # why debug not working :(
+
