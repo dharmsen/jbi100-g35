@@ -1,3 +1,4 @@
+from operator import rshift
 import plotly.express as px
 import pandas as pd
 import os
@@ -11,7 +12,7 @@ class Data:
     def __init__(self):
 
         # all data lives here
-        DATA_PATH = 'jbi100_app/assets/data/'
+        DATA_PATH = 'C:/Users/20181731/Documents/_Courses/_CS/Y3/Q2/JBI100 Visualization/repo/jbi100-g35/dashframework-main/jbi100_app/assets/data/'
 
         # Check if parquet files already exist
         if os.path.exists(DATA_PATH + 'location.parquet') and \
@@ -32,8 +33,49 @@ class Data:
 
             print('Parquet files missing, creating parquet files...')
 
-            self.df = pd.read_csv(DATA_PATH +
+            # mapping dicts
+            self.manoeuvres_dic = {
+                -1 : "Data missing or out of range", 
+                1 : "Reversing",
+                2 : "Parked", 
+                3 : "Waiting to go - held up", 
+                4 : "Slowing or stopping", 
+                5 : "Moving off", 
+                6 : "U-turn", 
+                7 : "Turning left", 
+                8 : "Waiting to turn left", 
+                9 : "Turning right", 
+                10 : "Waiting to turn right", 
+                11 : "Changing lane to left", 
+                12 : "Changing lane to right", 
+                13 : "Overtaking moving vehicle - offside", 
+                14 : "Overtaking static vehicle - offside", 
+                15 : "Overtaking - nearside",
+                16 : "Going ahead left-hand bend", 
+                17 : "Going ahead right-hand bend", 
+                18 : "Going ahead other", 
+                99 : "Unknown (self reported)"
+            }
+
+            self.weather_dic = {
+                -1 : "Data missing or out of range",
+                1 : "Fine without high winds",
+                2 : "Raining without high winds",
+                3 : "Snowing without high winds",
+                4 : "Fine with high winds",
+                5 : "Raining with high winds",
+                6 : "Snowing with high winds",
+                7 : "Fog or mist - if hazard",
+                8 : "Other",
+                9 : "Unknown"
+            }
+
+            self.df_accidents = pd.read_csv(DATA_PATH +
                                   'dft-road-casualty-statistics-accident-1979-2020.csv')
+            self.df_vehicle = pd.read_csv(DATA_PATH + 
+                                  'dft-road-casualty-statistics-vehicle-1979-2020.csv')
+            self.df = self.df_accidents.join(self.df_vehicle, 'accident_index', lsuffix='', rsuffix='_vehicle')
+            self.df.drop(self.df.filter(regex='_vehicle$').columns.tolist(),axis=1, inplace=True)
 
             self.df_nonull = self.df.dropna()
 
@@ -43,12 +85,14 @@ class Data:
 
             self.df_date = self.df_nonull[['accident_index', 'accident_year', 'date', 'day_of_week', 'time']]
 
-            self.df_conditions = self.df_nonull[
+            self.df_conditions_nomap = self.df_nonull[
                 ['accident_index', 'light_conditions', 'weather_conditions', 'road_surface_conditions',
                  'special_conditions_at_site']]
+            self.df_conditions = self.df_conditions_nomap.replace({'weather_conditions': self.weather_dic})
 
-            self.df_severity = self.df_nonull[
-                ['accident_index', 'police_force', 'accident_severity', 'number_of_vehicles', 'number_of_casualties']]
+            self.df_severity_nomap = self.df_nonull[
+                ['accident_index', 'police_force', 'accident_severity', 'number_of_vehicles', 'number_of_casualties', 'vehicle_manoeuvre']]
+            self.df_severity = self.df_severity_nomap.replace({"vehicle_manoeuvre": self.manoeuvres_dic})
 
             self.df_location.to_parquet('{}location.parquet'.format(DATA_PATH), engine='fastparquet')
             self.df_date.to_parquet('{}date.parquet'.format(DATA_PATH), engine='fastparquet')
