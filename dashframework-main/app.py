@@ -3,7 +3,9 @@ from jbi100_app.views.menu import make_menu_layout
 from jbi100_app.views.scatterplot import Scatterplot
 from jbi100_app.data import Data
 from jbi100_app.visualizations.barchart import Barchart
+
 from jbi100_app.visualizations.heatmap import HeatMap
+from jbi100_app.visualizations.stackedareachart import StackedAreaChart
 
 
 from jbi100_app.views.layout import generate_help_layout, generate_about_layout, generate_nav_bar, generate_basic_layout, generate_new_layout
@@ -22,7 +24,10 @@ from datetime import date
 # df_date, df_conditions, df_location, df_severity = data.get_dataframes()
 
 data = Data()
-df_date, df_severity, df_heatmap, df_heatmap_speeds = data.get_dataframes()
+
+# FIXME: check imports
+df_date, df_severity, df_conditions, df_heatmap, df_heatmap_speeds = data.get_dataframes()
+
 
 # FIXME: accident_index col is killing the table
 df_date.drop('accident_index', inplace=True, axis=1)
@@ -55,6 +60,14 @@ simple_barchart = Barchart('accident_year', 'number_of_casualties', grouped)
 # Make heat map
 heatmap = HeatMap(df_heatmap['accident_year'].min(), df_heatmap['accident_year'].max())
 
+# Make stacked area chart
+df_merged_area = df_date.join(df_conditions, lsuffix='_date', rsuffix='_conditions')
+grouped_area = df_merged_area.groupby('accident_year').size()
+grouped_area = grouped_area.reset_index(name='count')
+
+stacked_area_chart = StackedAreaChart('accident_year', 'count', 'weather_conditions', None, grouped_area)
+
+# Declare visualizations
 vis1 = heatmap.get_heatmap()
 
 vis2 = 'vis2'
@@ -129,16 +142,6 @@ def global_filter(year_range, time_range, vehicle_no, start_date, end_date, heat
 
     return heatmap
 
-# # Create visualizations
-# # Simple bar chart
-# @app.callback(
-#     Output('loading-output-1', 'children'), # Loading indicator
-#     Output(simple_barchart.html_id, 'figure'),
-#     Input('year-filter-global', 'value') # dummy input, else callback doesn't work
-# )
-# def update_simple_barchart(value):
-#     return 'Barchart loaded', simple_barchart.update()
-
 
 # Heatmap updater
 def update_figure(value, color):
@@ -167,6 +170,16 @@ def update_figure(value, color):
     fig.update_layout(transition_duration=500, margin=dict(l=5, r=5, t=35, b=5))
     return fig
 
+
+# Stacked bar chart
+@app.callback(
+    Output('loading-output-2', 'children'), # Loading indicator
+    Output(stacked_area_chart.html_id, 'figure'),
+    Input('year-filter-global', 'value')
+)
+
+def update_stacked_area_chart(value):
+    return 'Stacked area chart loaded', stacked_area_chart.update()
 
 
 if __name__ == '__main__':
