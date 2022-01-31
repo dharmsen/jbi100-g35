@@ -12,7 +12,7 @@ class Data:
     def __init__(self):
 
         # all data lives here
-        DATA_PATH = 'C:/Users/20181731/Documents/_Courses/_CS/Y3/Q2/JBI100 Visualization/repo/jbi100-g35/dashframework-main/jbi100_app/assets/data/'
+        DATA_PATH = 'jbi100_app/assets/data/'
 
         # Check if parquet files already exist
         if os.path.exists(DATA_PATH + 'location.parquet') and \
@@ -74,7 +74,7 @@ class Data:
                                   'dft-road-casualty-statistics-accident-1979-2020.csv')
             self.df_vehicle = pd.read_csv(DATA_PATH + 
                                   'dft-road-casualty-statistics-vehicle-1979-2020.csv')
-            self.df = self.df_accidents.join(self.df_vehicle, 'accident_index', lsuffix='', rsuffix='_vehicle')
+            self.df = self.df_accidents.join(self.df_vehicle, rsuffix='_vehicle')
             self.df.drop(self.df.filter(regex='_vehicle$').columns.tolist(),axis=1, inplace=True)
 
             self.df_nonull = self.df.dropna()
