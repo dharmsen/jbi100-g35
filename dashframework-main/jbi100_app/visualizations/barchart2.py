@@ -43,20 +43,20 @@ class BarChart():
             html.Div([
                     dcc.Dropdown(
                         id='xaxis',
-                        options=[ {'label': 'Amount of accidents', 'value': 'accident_index'},
-                                  {'label': 'Total deaths', 'value': 'number_of_casualties' },
-                                  {'label': 'Average deaths per accident', 'value': 'number_of_casualties_' }],
-                        #Default value: count          
-                        value='count'
+                        options=[ {'label': 'Weather types', 'value': 'weather_conditions'},
+                                  {'label': 'Manoeuvre types', 'value': 'vehicle_manoeuvre' }],
+                        #Default value: weather_conditions          
+                        value='weather_conditions'
                     ),
                 ], style={'width': '48%', 'display': 'inline-block', 'color': 'black'}
             ),
             html.Div([
                     dcc.Dropdown(
                         id='yaxis',
-                        options=[ {'label': 'Speed limit', 'value': 'speed'},
-                                  {'label': 'Count of accidents', 'value': 'count' }],
-                        value='count'
+                        options=[ {'label': 'Amount of accidents', 'value': 'accident_index'},
+                                  {'label': 'Total deaths', 'value': 'number_of_casualties' },
+                                  {'label': 'Average deaths per accident', 'value': 'number_of_casualties_mean' }],
+                        value='accident_index'
                     ),
                 ], style={'width': '48%', 'display': 'inline-block', 'color': 'black'}
             )
