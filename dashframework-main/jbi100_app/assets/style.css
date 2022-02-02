@@ -9,6 +9,7 @@ body {
 #div-inside-span {
     display: flex;
     flex-direction: column;
+    color: black;
 }
 
 /* Tooltip container */
@@ -32,12 +33,39 @@ body {
     /* Position the hovering filter panel */
     position: absolute;
     z-index: 1;
+    bottom: 55%;
+    left: 110%;
+
+    /* Fade in tooltip */
+    opacity: 0;
+    transition: visibility 2s, opacity 0.3s;
+}
+
+.tooltip .tooltiptext-global {
+    visibility: hidden;
+
+    /*TODO: check dimensions of tool tip*/
+    width: 500px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+
+    /* Position the hovering filter panel */
+    position: absolute;
+    z-index: 1;
     bottom: -20%;
     left: 110%;
 
     /* Fade in tooltip */
     opacity: 0;
     transition: visibility 2s, opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext-global {
+    visibility: visible;
+    opacity: 1;
 }
 
 .tooltip:hover .tooltiptext {
@@ -207,3 +235,171 @@ h5 {
     display: flex;
     flex-direction: column;
 }
+
+
+/*map stuff*/
+#map-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#map-control-panel {
+    display: flex;
+    flex-direction: row;
+    gap: 0.25rem;
+    width: 100%;
+    align-items: center;
+    position: relative;
+
+}
+
+#map-range-slider {
+    /*flex-grow: 3;*/
+    width: 100%;
+}
+
+#map-options {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: baseline;
+    /*flex-grow: 2;*/
+    width: 25%;
+    align-items: center;
+}
+
+#map-info-panel {
+    /*flex-grow: 1;*/
+    width: 12%;
+}
+
+#map-info {
+    font-size: 10px;
+}
+
+
+#map-hidden-panel {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    background-color: #d4d4d4;
+    position: absolute;
+    top: 100%;
+    left: 35%;
+    z-index: 1;
+    visibility: hidden;
+    opacity: 0;
+    flex-direction: column;
+
+    transition: visibility 2s, opacity 0.3s;
+}
+
+.button-wrapper {
+   display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.button-wrapper img {
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.drop-down-label {
+    display: flex;
+    flex-direction: row;
+}
+
+#map-tool-tip {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    background-color: beige;
+    position: absolute;
+    top: 89%;
+    left: 20%;
+    z-index: 1;
+    visibility: hidden;
+    opacity: 0;
+    flex-direction: column;
+
+    transition: visibility 2s, opacity 0.3s;
+}
+
+#map-ok-button {
+    position: relative;
+}
+
+#map-ok-button:hover + div {
+    visibility: visible;
+    opacity: 1;
+}
+
+#loading-wrapper {
+    width: 10%;
+    height: 100%;
+}
+
+.drop-icon {
+    height: 100%;
+    width: 100%;
+    margin-top: -8px;
+}
+
+.aux-pages {
+    display: flex;
+    flex-direction: column;
+    margin: 5rem;
+    padding: 2.5rem;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+#about-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 1rem;
+    gap: 3rem;
+    justify-content: space-around;
+}
+
+#about-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.about-image {
+    height: 300px;
+    width: 300px;
+}
+
+#about-card p {
+    text-align: justify;
+    text-overflow: clip;
+    width: 300px;
+}
+
+#help-container {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    gap: 3rem;
+}
+
+#help-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#help-card p {
+    text-align: justify;
+    text-overflow: clip;
+    width: 300px;
+}
+

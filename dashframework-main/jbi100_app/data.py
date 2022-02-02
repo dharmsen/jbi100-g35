@@ -1,3 +1,4 @@
+from operator import rshift
 import plotly.express as px
 import pandas as pd
 import os
@@ -17,23 +18,70 @@ class Data:
         if os.path.exists(DATA_PATH + 'location.parquet') and \
                 os.path.exists(DATA_PATH + 'date.parquet') and \
                 os.path.exists(DATA_PATH + 'conditions.parquet') and \
-                os.path.exists(DATA_PATH + 'severity.parquet'):
+                os.path.exists(DATA_PATH + 'severity.parquet') and \
+                os.path.exists(DATA_PATH + 'heatmapData.parquet') and \
+                os.path.exists(DATA_PATH + 'heatmapDataSpeeds.parquet'):
 
             print('Parquet files located, creating dataframes...')
 
             # TODO: commented for quicker start up
-            # self.df_conditions = pd.read_parquet(DATA_PATH + 'conditions.parquet')
+            self.df_conditions = pd.read_parquet(DATA_PATH + 'conditions.parquet')
             self.df_date = pd.read_parquet(DATA_PATH + 'date.parquet')
-            # self.df_location = pd.read_parquet(DATA_PATH + 'location.parquet')
+            self.df_location = pd.read_parquet(DATA_PATH + 'location.parquet')
             self.df_severity = pd.read_parquet(DATA_PATH + 'severity.parquet')
+
+            # Heatmaps things
+            self.df_heatmap = pd.read_parquet(DATA_PATH + 'heatmapData.parquet')
+            self.df_heatmap_speeds = pd.read_parquet(DATA_PATH + 'heatmapDataSpeeds.parquet')
 
         else:
             # If files are missing, must create them
 
             print('Parquet files missing, creating parquet files...')
 
-            self.df = pd.read_csv(DATA_PATH +
+            # mapping dicts
+            self.manoeuvres_dic = {
+                -1 : "Data missing or out of range", 
+                1 : "Reversing",
+                2 : "Parked", 
+                3 : "Waiting to go - held up", 
+                4 : "Slowing or stopping", 
+                5 : "Moving off", 
+                6 : "U-turn", 
+                7 : "Turning left", 
+                8 : "Waiting to turn left", 
+                9 : "Turning right", 
+                10 : "Waiting to turn right", 
+                11 : "Changing lane to left", 
+                12 : "Changing lane to right", 
+                13 : "Overtaking moving vehicle - offside", 
+                14 : "Overtaking static vehicle - offside", 
+                15 : "Overtaking - nearside",
+                16 : "Going ahead left-hand bend", 
+                17 : "Going ahead right-hand bend", 
+                18 : "Going ahead other", 
+                99 : "Unknown (self reported)"
+            }
+
+            self.weather_dic = {
+                -1 : "Data missing or out of range",
+                1 : "Fine without high winds",
+                2 : "Raining without high winds",
+                3 : "Snowing without high winds",
+                4 : "Fine with high winds",
+                5 : "Raining with high winds",
+                6 : "Snowing with high winds",
+                7 : "Fog or mist - if hazard",
+                8 : "Other",
+                9 : "Unknown"
+            }
+
+            self.df_accidents = pd.read_csv(DATA_PATH +
                                   'dft-road-casualty-statistics-accident-1979-2020.csv')
+            self.df_vehicle = pd.read_csv(DATA_PATH + 
+                                  'dft-road-casualty-statistics-vehicle-1979-2020.csv')
+            self.df = self.df_accidents.join(self.df_vehicle, rsuffix='_vehicle')
+            self.df.drop(self.df.filter(regex='_vehicle$').columns.tolist(),axis=1, inplace=True)
 
             self.df_nonull = self.df.dropna()
 
@@ -43,22 +91,36 @@ class Data:
 
             self.df_date = self.df_nonull[['accident_index', 'accident_year', 'date', 'day_of_week', 'time']]
 
-            self.df_conditions = self.df_nonull[
+            self.df_conditions_nomap = self.df_nonull[
                 ['accident_index', 'light_conditions', 'weather_conditions', 'road_surface_conditions',
                  'special_conditions_at_site']]
+            self.df_conditions = self.df_conditions_nomap.replace({'weather_conditions': self.weather_dic})
 
-            self.df_severity = self.df_nonull[
-                ['accident_index', 'police_force', 'accident_severity', 'number_of_vehicles', 'number_of_casualties']]
+            self.df_severity_nomap = self.df_nonull[
+                ['accident_index', 'police_force', 'accident_severity', 'number_of_vehicles', 'number_of_casualties', 'vehicle_manoeuvre']]
+            self.df_severity = self.df_severity_nomap.replace({"vehicle_manoeuvre": self.manoeuvres_dic})
 
             self.df_location.to_parquet('{}location.parquet'.format(DATA_PATH), engine='fastparquet')
             self.df_date.to_parquet('{}date.parquet'.format(DATA_PATH), engine='fastparquet')
             self.df_conditions.to_parquet('{}conditions.parquet'.format(DATA_PATH), engine='fastparquet')
             self.df_severity.to_parquet('{}severity.parquet'.format(DATA_PATH), engine='fastparquet')
 
+
+            # heat maps data
+            self.df_heatmap = pd.read_csv(DATA_PATH + 'heatmap.csv')
+            self.df_heatmap_speeds = pd.read_csv(DATA_PATH + 'heatmapspeedlimit.csv')
+
+            self.df_heatmap.to_parquet('{}heatmapData.parquet'.format(DATA_PATH), engine='fastparquet')
+            self.df_heatmap_speeds.to_parquet('{}heatmapDataSpeeds.parquet'.format(DATA_PATH), engine='fastparquet')
+
+
+
     # Returns the four dataframes: conditions, date, location, severity
     def get_dataframes(self) -> pd.DataFrame:
         # TODO: commented for performance increase
-        return self.df_date, self.df_severity#, self.df_conditions, self.df_location
+        
+        # return self.df_date, self.df_severity#, self.df_conditions, self.df_location
+        return self.df_date, self.df_severity, self.df_conditions, self.df_location, self.df_heatmap, self.df_heatmap_speeds
 
     # Returns settings for slider, like mins and maxes
     def get_range_filter_global_settings(self) -> dict:
