@@ -24,20 +24,22 @@ class StackedAreaChart(html.Div):
                 children=[
                     dcc.Graph(id=self.html_id, style={'height': '90%'},
                     figure=self.fig
-                    ),
-                    dcc.Dropdown(
-                        id='area_select_dropdown',
-                        style={'height': '10%'},
-                        options=[
-                            {'label': 'Weather conditions', 'value': 'weather_conditions'},
-                            {'label': 'Manoeuvre type', 'value': 'vehicle_manoeuvre'}
-                        ],
-                        value=self.color,
-                        clearable=False,
-                        searchable=False
                     )
                 ]
             )
+        )
+
+    def create_dropdown(self):
+        return dcc.Dropdown(
+            id='area_select_dropdown',
+            style={'height': '10%', 'color': 'black'},
+            options=[
+                {'label': 'Weather conditions', 'value': 'weather_conditions'},
+                {'label': 'Manoeuvre type', 'value': 'vehicle_manoeuvre'}
+            ],
+            value=self.color,
+            clearable=False,
+            searchable=False
         )
 
     def update(self, column, df):

@@ -74,7 +74,9 @@ def generate_basic_layout():
 # external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 # Each visualization is assigned a unique id that informs drawer what items are needed inside the control panel
-def generate_hover_over_control_panel(visId: int):
+def generate_hover_over_control_panel(visId: int, vis):
+    vis_names = ['Heatmap', 'Map', 'Bar chart', 'Stacked area Chart']
+
     return html.Div(
         className="tooltip",
         children=[
@@ -86,8 +88,8 @@ def generate_hover_over_control_panel(visId: int):
                 width="64",
                 height="64"
             ),
-            html.P('Filter Vis {}'.format(visId)),
-            generate_control_panel(visId)
+            html.P('Filter {}'.format(vis_names[visId-1])),
+            generate_control_panel(visId, vis)
         ]
     )
 
@@ -111,7 +113,7 @@ def generate_global_filtering_panel(range_filter_global_settings, date_filter_gl
     )
 
 # Generates the side bar for main page
-def generate_side_bar(range_filter_global_settings, date_filter_global_settings):
+def generate_side_bar(range_filter_global_settings, date_filter_global_settings, vis1, vis2, vis3, vis4):
     return html.Div(
         id='side-bar',
         children=[
@@ -122,15 +124,16 @@ def generate_side_bar(range_filter_global_settings, date_filter_global_settings)
                 children=html.Div(id="loading-output-1")
             ),
             generate_global_filtering_panel(range_filter_global_settings, date_filter_global_settings),
-            generate_hover_over_control_panel(1),
-            generate_hover_over_control_panel(2),
-            generate_hover_over_control_panel(3),
-            generate_hover_over_control_panel(4)
+            generate_hover_over_control_panel(1, vis1),
+            generate_hover_over_control_panel(2, vis2),
+            generate_hover_over_control_panel(3, vis3),
+            generate_hover_over_control_panel(4, vis4)
         ]
     )
 
 # Generates visualization container for main page
 def generate_vis_container(vis1, vis2, vis3, vis4):
+
     return html.Div(
         id="vis-new-container",
         children=[
@@ -162,8 +165,8 @@ def generate_new_layout(range_filter_global_settings, date_filter_global_setting
     return html.Div(
         id="vis",
         children=[
-            generate_side_bar(range_filter_global_settings, date_filter_global_settings),
-            generate_vis_container(vis1, vis2, vis3, vis4)
+            generate_side_bar(range_filter_global_settings, date_filter_global_settings, vis1[1], vis2[1], vis3[1], vis4[1]),
+            generate_vis_container(vis1[0], vis2[0], vis3[0], vis4[0])
         ]
     )
 

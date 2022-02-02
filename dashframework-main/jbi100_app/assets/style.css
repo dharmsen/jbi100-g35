@@ -9,6 +9,7 @@ body {
 #div-inside-span {
     display: flex;
     flex-direction: column;
+    color: black;
 }
 
 /* Tooltip container */
@@ -32,12 +33,39 @@ body {
     /* Position the hovering filter panel */
     position: absolute;
     z-index: 1;
+    bottom: 55%;
+    left: 110%;
+
+    /* Fade in tooltip */
+    opacity: 0;
+    transition: visibility 2s, opacity 0.3s;
+}
+
+.tooltip .tooltiptext-global {
+    visibility: hidden;
+
+    /*TODO: check dimensions of tool tip*/
+    width: 500px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+
+    /* Position the hovering filter panel */
+    position: absolute;
+    z-index: 1;
     bottom: -20%;
     left: 110%;
 
     /* Fade in tooltip */
     opacity: 0;
     transition: visibility 2s, opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext-global {
+    visibility: visible;
+    opacity: 1;
 }
 
 .tooltip:hover .tooltiptext {

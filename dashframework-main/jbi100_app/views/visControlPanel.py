@@ -3,20 +3,21 @@ from jbi100_app.main import app
 from dash.dependencies import Input, Output
 from datetime import date
 
-from jbi100_app.visualizations.heatmap import HeatMap
-
+# from jbi100_app.visualizations.heatmap import HeatMap
+# from jbi100_app.visualizations.stackedareachart import StackedAreaChart
 
 # Stores visualization control panels that pop up when user hovers over vis icons.
 
 # Generates the control panel that appears when user hovers over vis icons.
-def generate_control_panel(visId: int):
+def generate_control_panel(visId: int, vis):
     # TODO: add custom behaviour depending on visId
 
     # Not the best since hardcoding each position for each vis
-    controls = 'Controls go here.'
+    controls = 'Please check visualizatoin for controls.'
     if visId == 1:
-        heatmap = HeatMap(1979, 2020)
-        controls = heatmap.get_heatmap_controls()
+        controls = vis.get_heatmap_controls()
+    elif visId == 4:
+        controls = vis.create_dropdown()
 
     return html.Span(
         className="tooltiptext",
@@ -34,7 +35,7 @@ def generate_control_panel(visId: int):
 # Global filtering control panel
 def generate_global_control_panel(range_filter_global_settings, date_filter_global_settings):
     return html.Span(
-        className="tooltiptext",
+        className="tooltiptext-global",
         children=[
             html.Div(
                 className='div-inside-span',

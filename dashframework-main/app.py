@@ -98,14 +98,16 @@ grouped_area_manu = grouped_area_manu.reset_index(name='count_manoeuvre')
 
 stacked_area_chart = StackedAreaChart('accident_year', 'count_weather', 'weather_conditions', None, grouped_area_cond, 'Weather Conditions')
 # Declare visualizations
-vis1 = heatmap.get_heatmap()
-print(vis1)
+# vis is a tuple consiting of the visualization itself and the visualization object.
 
-vis2 = map
+vis1 = (heatmap.get_heatmap(), heatmap)
 
-vis3 = 'vis3'
+vis2 = (map, m)
 
-vis4 = stacked_area_chart
+vis3 = ('vis3', 'obj')
+
+# stacked_area_chart is implemented slightly differently so its technically both.
+vis4 = (stacked_area_chart, stacked_area_chart)
 
 app.layout = html.Div(
     id="app-container",
