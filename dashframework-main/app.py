@@ -324,7 +324,6 @@ def barchart(value):
     #fig.update_layout(
     #        margin=dict(l=5, r=5, t=5, b=5),
     #    )
-    fig.update_yaxes(range = [-4,4])
     return fig
         
  
