@@ -45,7 +45,7 @@ class Map_Visualization():
                                         'Time': 'time',
                                         'Date': 'date',
                                         },
-                                color_continuous_scale=px.colors.cyclical.IceFire, size_max=15, zoom=2)
+                                color_continuous_scale=px.colors.sequential.thermal, size_max=15, zoom=2)
 
         # update fig
         self.update_fig(fig)

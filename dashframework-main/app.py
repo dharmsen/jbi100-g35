@@ -355,22 +355,3 @@ def update_stacked_area_chart(value, area_select_dropdown):
 if __name__ == '__main__':
     app.run_server(debug=False, host='0.0.0.0')  # why debug not working :(
 
-# @app.callback(
-#     Output('map', 'figure'),
-#     Output('map-range-slider', 'value'),
-#     Input('map-range-slider', 'value'),
-#     Input('color-dropdown', 'value'),
-#     Input('size-dropdown', 'value'),
-# )
-# def update_map(value, color_drop, size_drop):
-#     print(color_drop)
-#     print(size_drop)
-#     # Filter copy of df_map for given dates
-#     print('Year 1: ' + str(value[0]))
-#     print('Year 2: ' + str(value[1]))
-#
-#     new_values = check_size(value[0], value[1])
-#
-#     df_map_filtered = df_map[(df_map['accident_year'] >= new_values[0]) & (df_map['accident_year'] <= new_values[1])]
-#
-#     return m.create_figure(df_map_filtered, color_drop, size_drop), new_values
