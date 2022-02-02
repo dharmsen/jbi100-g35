@@ -49,12 +49,12 @@ class BarChart():
             html.Div([
                     dcc.Dropdown(
                         id='xaxis',
-                        options=[ {'label': 'Weather types', 'value': 'weather_conditions'},
+                        options=[ {'label': 'Weather conditions', 'value': 'weather_conditions'},
                                   {'label': 'Manoeuvre types', 'value': 'vehicle_manoeuvre' }],
                         #Default value: weather_conditions          
                         value='weather_conditions'
                     ),
-                ], style={'width': '48%', 'display': 'inline-block', 'color': 'black'}
+                ], style={'width': '90%', 'display': 'inline-block', 'color': 'black', 'margin': 'auto'}
             ),
             html.Div([
                     dcc.Dropdown(
@@ -64,12 +64,10 @@ class BarChart():
                                   {'label': 'Average deaths per accident', 'value': 'number_of_casualties_mean' }],
                         value='accident_index'
                     ),
-                ], style={'width': '48%', 'display': 'inline-block', 'color': 'black'}
+                ], style={'width': '90%', 'display': 'inline-block', 'color': 'black', 'margin': 'auto'}
             )
-            ]
+            ], style = {'display': 'flex', 'flex-direction': 'column'}
         )
-        
-        
         
         
     
@@ -79,11 +77,18 @@ class BarChart():
     # Do I need to add self.yvalue or just yvalue?
     # DO I need self.yvalue2 or just yvalue2?
     def update(self, xvalue, yvalue, df_bar):
+        # PROBLEM:
+        # It only shows debug, i.e.xvalue and yvalue are most likely empty and therefore no graph will show up.
+        
         # Giving the x lables corresponding to the xvalue
+        # Else is for debug
         if xvalue == 'weather_conditions':
             self.lable_x = 'Weather Conditions'
         elif xvalue == 'vehicle_manoeuvre':
             self.lable_x= 'Manoeuvre Type'
+        else :
+            xvalue = 'weather_conditions'
+            self.lable_x = 'Debug: Weather Conditions'
         
         
         # yvalue2 = '' if yvalue corresponds with the correct column
@@ -102,20 +107,31 @@ class BarChart():
             self.yvalue2 = 'number_of_casualties'
             self.lable_y = 'Average deaths per accident'
             self.agg = 'mean'
+        else:
+            self.yvalue2 = 'accident_index'
+            self.lable_y = 'Debug: Total accidents'
+            self.agg = 'count'
 
 
         # Update the groupby function according to the new x- and or y-value
         # Update the groupby function according the aggregate function
         if self.yvalue2 != "":
-            df_groupedbybar = df_bar.groupby(self.xvalue).agg({self.yvalue2 : self.agg}).reset_index()
+            self.df_groupedbybar = df_bar.groupby(xvalue).agg({self.yvalue2 : self.agg}).reset_index()
+            self.fig = px.bar(self.df_groupedbybar,
+                            x=xvalue, y=self.yvalue2, title='Barchart',
+                            labels={xvalue: self.lable_x, self.yvalue2: self.lable_y})
         else:
-            df_groupedbybar = df_bar.groupby(self.xvalue).agg({self.yvalue : self.agg}).reset_index()
+            self.df_groupedbybar = df_bar.groupby(xvalue).agg({yvalue : self.agg}).reset_index()
+            self.fig = px.bar(self.df_groupedbybar,
+                            x=xvalue, y=yvalue, title='Barchart',
+                            labels={xvalue: self.lable_x, yvalue: self.lable_y})
+        
+        # #Original, this works:
+        # self.df_groupedbybar = df_bar.groupby('vehicle_manoeuvre').agg({'accident_index' : 'count'}).reset_index()    
+        # self.fig = px.bar(self.df_groupedbybar,
+                # x = "vehicle_manoeuvre", y = "accident_index",
+                # labels={'accident_index': 'Total accidents', 'vehicle_manoeuvre': 'Manoeuvres'})
         
             
-        self.fig = px.area(df_groupedbybar
-                            , x=self.xvalue
-                            , y=self.yvalue
-                            , title='Barchart'
-                            , labels={self.xvalue: self.lable_x,
-                            self.yvalue: self.lable_y})
+        
         return self.fig

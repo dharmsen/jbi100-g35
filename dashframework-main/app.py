@@ -316,18 +316,13 @@ def openOptions(value):
 @app.callback(
     Output('barchart-graph', 'figure'),
     #Input = dropdown/ slider etc.
+    
+    # TO DO implement global filters
     Input('year-filter-global', 'value'),
-    #Input('area_select_dropdown', 'value')
+    
+    Input('xaxis', 'x_select'),
+    Input('yaxis', 'y_select')
  )
-
-def barchart(value):
-    fig = px.bar(df_groupedbybar,
-        x = "vehicle_manoeuvre", y = "accident_index",
-            labels={'accident_index': 'Total accidents', 'vehicle_manoeuvre': 'Manoeuvres'})
-    #fig.update_layout(
-    #        margin=dict(l=5, r=5, t=5, b=5),
-    #    )
-    return fig
         
  
 def update_barchart(value, x_select_dropdown, y_select_dropdown):
@@ -341,9 +336,19 @@ def update_barchart(value, x_select_dropdown, y_select_dropdown):
     #    return BarChart.update(area_select_dropdown, grouped_area_manu)
     
     # x-value, y-value
-    return BarChart.update(x_select_dropdown, y_select_dropdown, df_bar)
+    return bar.update(x_select_dropdown, y_select_dropdown, df_bar)
 
 
+#If I comment def barchart out, the graph doesnt show up anymore!
+#Since update_barchart immediately after callback, this function should not be used by the code anymore. == as commenting out
+def barchart(value):
+    fig = px.bar(df_groupedbybar,
+        x = "vehicle_manoeuvre", y = "accident_index",
+            labels={'accident_index': 'Total accidents', 'vehicle_manoeuvre': 'Manoeuvres'})
+    #fig.update_layout(
+    #        margin=dict(l=5, r=5, t=5, b=5),
+    #    )
+    return fig
 
 
 
