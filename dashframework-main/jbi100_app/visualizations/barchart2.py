@@ -18,13 +18,12 @@ class BarChart():
 
     # TODO
     # Figure out what's happening here
-    def __init__(self, feature_x, feature_y, df, title):
+    def __init__(self, xvalue, yvalue, df):
         #self.html_id = 'barchart-graph'
         self.df = df
-        self.feature_x = feature_x
-        self.feature_y = feature_y
-        self.title= title
-        self.update(self.df)
+        self.xvalue = xvalue
+        self.yvalue = yvalue
+        self.update(self.xvalue, self.yvalue, self.df)
         
         # Equivalent to `html.Div([...])`
         #super().__init__(
@@ -117,6 +116,6 @@ class BarChart():
                             , x=self.xvalue
                             , y=self.yvalue
                             , title='Barchart'
-                            , labels={self.xvalue: self.label_x,
-                            self.yvalue: self.label_y})
+                            , labels={self.xvalue: self.lable_x,
+                            self.yvalue: self.lable_y})
         return self.fig

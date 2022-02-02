@@ -89,6 +89,8 @@ simple_barchart = Barchart('accident_year', 'number_of_casualties', grouped)
 df_bar = df_conditions.join(df_severity, rsuffix='_b')
 df_groupedbybar = df_bar.groupby('vehicle_manoeuvre').agg({'accident_index' : 'count'}).reset_index()
 
+bar = BarChart("weather_conditions", "accident_index", df_bar)
+
 # Make heat map
 heatmap = HeatMap(df_heatmap['accident_year'].min(), df_heatmap['accident_year'].max())
 
@@ -109,7 +111,7 @@ vis1 = (heatmap.get_heatmap(), heatmap)
 
 vis2 = (map, m)
 
-vis3 = (bar.get_barchart(), barchart2)
+vis3 = (bar.get_barchart(), bar)
 #vis3 = (dcc.Graph(id='barchart-graph', style={'height': '100%'}), "")
 
 # stacked_area_chart is implemented slightly differently so its technically both.
