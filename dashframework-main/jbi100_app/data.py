@@ -120,7 +120,7 @@ class Data:
         # TODO: commented for performance increase
         
         # return self.df_date, self.df_severity#, self.df_conditions, self.df_location
-        return self.df_date, self.df_severity, self.df_conditions, self.df_heatmap, self.df_heatmap_speeds#, self.df_location
+        return self.df_date, self.df_severity, self.df_conditions, self.df_location, self.df_heatmap, self.df_heatmap_speeds
 
     # Returns settings for slider, like mins and maxes
     def get_range_filter_global_settings(self) -> dict:
