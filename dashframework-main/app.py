@@ -7,6 +7,7 @@ from jbi100_app.visualizations.map import Map_Visualization
 
 from jbi100_app.visualizations.heatmap import HeatMap
 from jbi100_app.visualizations.stackedareachart import StackedAreaChart
+from jbi100_app.visualizations.barchart2 import BarChart
 
 
 from jbi100_app.views.layout import generate_help_layout, generate_about_layout, generate_nav_bar, generate_basic_layout, generate_new_layout
@@ -108,8 +109,8 @@ vis1 = (heatmap.get_heatmap(), heatmap)
 
 vis2 = (map, m)
 
-#vis3 = (bar.get_barchart(), Barchart())
-vis3 = (dcc.Graph(id='barchart-graph', style={'height': '100%'}), "")
+vis3 = (bar.get_barchart(), barchart2)
+#vis3 = (dcc.Graph(id='barchart-graph', style={'height': '100%'}), "")
 
 # stacked_area_chart is implemented slightly differently so its technically both.
 vis4 = (stacked_area_chart, stacked_area_chart)

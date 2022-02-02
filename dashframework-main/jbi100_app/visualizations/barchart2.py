@@ -19,7 +19,7 @@ class BarChart():
     # TODO
     # Figure out what's happening here
     def __init__(self, feature_x, feature_y, df, title):
-        self.html_id = 'barchart-graph'
+        #self.html_id = 'barchart-graph'
         self.df = df
         self.feature_x = feature_x
         self.feature_y = feature_y
@@ -27,12 +27,19 @@ class BarChart():
         self.update(self.df)
         
         # Equivalent to `html.Div([...])`
-        super().__init__(
-            dcc.Graph(id=self.html_id, style={'height': '100%'}),
+        #super().__init__(
+        #    dcc.Graph(id=self.html_id, style={'height': '100%'}),
+        #    style={'height': '100%'}
+        #)
+        
+    def get_barchart(self):
+        return html.Div([
+            dcc.Graph(id='barchart-graph', style={'height': '100%'}),
+            ],
             style={'height': '100%'}
         )
-        
-        
+
+    
     # Creates the dropdown to choose the value for x- and y-axis
     # TODO
     # Create dropdown for y-axis
