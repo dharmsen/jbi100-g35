@@ -84,6 +84,10 @@ grouped = grouped.reset_index()
 
 simple_barchart = Barchart('accident_year', 'number_of_casualties', grouped)
 
+#For the actual used barchart
+df_bar = df_conditions.join(df_severity, rsuffix='_b')
+df_groupedbybar = df_bar.groupby('vehicle_manoeuvre').agg({'accident_index' : 'count'}).reset_index()
+
 # Make heat map
 heatmap = HeatMap(df_heatmap['accident_year'].min(), df_heatmap['accident_year'].max())
 
@@ -104,7 +108,8 @@ vis1 = (heatmap.get_heatmap(), heatmap)
 
 vis2 = (map, m)
 
-vis3 = ('vis3', 'obj')
+#vis3 = (bar.get_barchart(), Barchart())
+vis3 = (dcc.Graph(id='barchart-graph', style={'height': '100%'}), "")
 
 # stacked_area_chart is implemented slightly differently so its technically both.
 vis4 = (stacked_area_chart, stacked_area_chart)
@@ -236,6 +241,7 @@ def slider(value):
     Input('size-dropdown', 'value'),
     # Input("loading-input-1-1", "value")
 )
+
 # Output("loading-output-1", "children"), Input("loading-input-1", "value")
 def do_map(txt, range, time_range, color_drop, size_drop):#, value):
     print(time_range)
@@ -281,27 +287,58 @@ def openOptions(value):
 
 
 #df_line = the combination of df_join and df_severity
-df_line = df_date.join(df_severity, rsuffix='_b')
+#df_line = df_date.join(df_severity, rsuffix='_b')
 #How many people die in total per year
-df_groupedbysum = df_line.groupby('accident_year').agg({'number_of_casualties' : 'sum'}).reset_index()
+#df_groupedbysum = df_line.groupby('accident_year').agg({'number_of_casualties' : 'sum'}).reset_index()
+
+#@app.callback(
+#    #First id is id of the element you want to play with
+#    #Second id is the thing you want to modify
+#    Output('line-chart', 'figure'),
+#    Input('year-filter-global', 'value')
+#)
+
+#def line_chart(value):
+#    #fig = px.line(df[], 
+#    #    x="year", y="lifeExp", color='country')
+#    fig = px.line(df_groupedbysum, 
+#        x = "accident_year", y = "number_of_casualties", 
+#              labels = {'number_of_casualties': 'Deaths', 'accident_year': 'year'}, 
+#              range_y = [0, 350000])
+#    return fig
+
+
+# Barchart
 
 @app.callback(
-    #First id is id of the element you want to play with
-    #Second id is the thing you want to modify
-    Output('line-chart', 'figure'),
-    Input('year-filter-global', 'value')
-)
+    Output('barchart-graph', 'figure'),
+    #Input = dropdown/ slider etc.
+    Input('year-filter-global', 'value'),
+    #Input('area_select_dropdown', 'value')
+ )
 
-def line_chart(value):
-    #fig = px.line(df[], 
-    #    x="year", y="lifeExp", color='country')
-    fig = px.line(df_groupedbysum, 
-        x = "accident_year", y = "number_of_casualties", 
-              labels = {'number_of_casualties': 'Deaths', 'accident_year': 'year'}, 
-              range_y = [0, 350000])
+def barchart(value):
+    fig = px.bar(df_groupedbybar,
+        x = "vehicle_manoeuvre", y = "accident_index",
+            labels={'accident_index': 'Total accidents', 'vehicle_manoeuvre': 'Manoeuvres'})
+    #fig.update_layout(
+    #        margin=dict(l=5, r=5, t=5, b=5),
+    #    )
     return fig
-
-
+        
+ 
+def update_barchart(value, x_select_dropdown, y_select_dropdown):
+    # TODO
+    # Dropdown y-axis: {amount of accidents/ total amount of deaths/ average death per accident} 
+    # Dropdown x-axis: {weather, maneuvres}
+    
+    #if area_select_dropdown == 'weather_conditions':
+    #    return BarChart.update(area_select_dropdown, grouped_area_cond)
+    #elif area_select_dropdown == 'vehicle_manoeuvre':
+    #    return BarChart.update(area_select_dropdown, grouped_area_manu)
+    
+    # x-value, y-value
+    return BarChart.update(x_select_dropdown, y_select_dropdown, df_bar)
 
 
 
