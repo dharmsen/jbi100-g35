@@ -87,7 +87,9 @@ simple_barchart = Barchart('accident_year', 'number_of_casualties', grouped)
 
 #For the actual used barchart
 df_bar = df_conditions.join(df_severity, rsuffix='_b')
-df_groupedbybar = df_bar.groupby('vehicle_manoeuvre').agg({'accident_index' : 'count'}).reset_index()
+df_bar = df_bar.join(df_date, rsuffix = '_c')
+df_bar['hour_time'] = pd.to_datetime(df_bar['time'], format='%H:%M').dt.hour
+#df_groupedbybar = df_bar.groupby('vehicle_manoeuvre').agg({'accident_index' : 'count'}).reset_index()
 
 bar = BarChart("weather_conditions", "accident_index", df_bar)
 
@@ -319,36 +321,44 @@ def openOptions(value):
     
     # TO DO implement global filters
     Input('year-filter-global', 'value'),
+    Input('time-filter-global', 'value'),
+    Input('vehicles-slider-global', 'value'),
+    Input('date-picker-global', 'value'),
+    Input('date-picker-global', 'value'),
     
     Input('xaxis', 'value'),
     Input('yaxis', 'value')
  )
         
  
-def update_barchart(value, x_select_dropdown, y_select_dropdown):
+def update_barchart(year_range, time_range, vehicle_no, start_date, end_date, x_select_dropdown, y_select_dropdown):
     # TODO
-    # Dropdown y-axis: {amount of accidents/ total amount of deaths/ average death per accident} 
-    # Dropdown x-axis: {weather, maneuvres}
+    # Update the df_bar to match the input
+    df_barfilter = df_bar[(df_bar['accident_year'] <= year_range[1]) & (df_bar['accident_year'] >= year_range[0])].copy()
+    df_barfilter = df_barfilter[(df_barfilter['hour_time'] <= time_range[1]) & (df_barfilter['hour_time'] >= time_range[0])].copy()
     
-    #if area_select_dropdown == 'weather_conditions':
-    #    return BarChart.update(area_select_dropdown, grouped_area_cond)
-    #elif area_select_dropdown == 'vehicle_manoeuvre':
-    #    return BarChart.update(area_select_dropdown, grouped_area_manu)
+    # Can you only select one or multiple vehicles?
+    # So 1-5, or only 1 or 5 involved
+    # df_barfilter = df_barfilter[(df_barfilter['number_of_vehicles'] <= vehicle_no[1]) & (df_barfilter['number_of_vehicles'] >= vehicle_no[0])].copy()
     
-    # x-value, y-value
-    return bar.update(x_select_dropdown, y_select_dropdown, df_bar)
+    # Something goes wrong with comparing string not compatable with <=
+    # df_barfilter = df_barfilter[(df_barfilter['date'] <= end_date) & (df_barfilter['date'] >= start_date)].copy()
+    
+    
+    
+    # return the graph with correseponding values
+    return bar.update(x_select_dropdown, y_select_dropdown, df_barfilter)
 
 
-#If I comment def barchart out, the graph doesnt show up anymore!
-#Since update_barchart immediately after callback, this function should not be used by the code anymore. == as commenting out
-def barchart(value):
-    fig = px.bar(df_groupedbybar,
-        x = "vehicle_manoeuvre", y = "accident_index",
-            labels={'accident_index': 'Total accidents', 'vehicle_manoeuvre': 'Manoeuvres'})
-    #fig.update_layout(
-    #        margin=dict(l=5, r=5, t=5, b=5),
-    #    )
-    return fig
+# #Since update_barchart immediately after callback, this function should not be used by the code anymore. == as commenting out
+# def barchart(value):
+    # fig = px.bar(df_groupedbybar,
+        # x = "vehicle_manoeuvre", y = "accident_index",
+            # labels={'accident_index': 'Total accidents', 'vehicle_manoeuvre': 'Manoeuvres'})
+    # #fig.update_layout(
+    # #        margin=dict(l=5, r=5, t=5, b=5),
+    # #    )
+    # return fig
 
 
 

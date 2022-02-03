@@ -73,9 +73,7 @@ class BarChart():
     
     
     # TODO
-    # When to use self. and when not?
-    # Do I need to add self.yvalue or just yvalue?
-    # DO I need self.yvalue2 or just yvalue2?
+    # df_bar = df_barfilter
     def update(self, xvalue, yvalue, df_bar):
         # PROBLEM:
         # It only shows debug, i.e.xvalue and yvalue are most likely empty and therefore no graph will show up.
