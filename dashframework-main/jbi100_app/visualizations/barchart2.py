@@ -50,7 +50,10 @@ class BarChart():
                     dcc.Dropdown(
                         id='xaxis',
                         options=[ {'label': 'Weather conditions', 'value': 'weather_conditions'},
-                                  {'label': 'Manoeuvre types', 'value': 'vehicle_manoeuvre' }],
+                                  {'label': 'Manoeuvre types', 'value': 'vehicle_manoeuvre' },
+                                  {'label': 'Light conditions', 'value': 'light_conditions' },
+                                  {'label': 'Road surface conditions', 'value': 'road_surface_conditions' },
+                                  {'label': 'Special conditions at site', 'value': 'special_conditions_at_site' }],
                         #Default value: weather_conditions          
                         value='weather_conditions'
                     ),
@@ -61,7 +64,8 @@ class BarChart():
                         id='yaxis',
                         options=[ {'label': 'Amount of accidents', 'value': 'accident_index'},
                                   {'label': 'Total deaths', 'value': 'number_of_casualties' },
-                                  {'label': 'Average deaths per accident', 'value': 'number_of_casualties_mean' }],
+                                  {'label': 'Average deaths per accident', 'value': 'number_of_casualties_mean' },
+                                  {'label': 'Median deaths per accident', 'value': 'number_of_casualties_median' }],
                         value='accident_index'
                     ),
                 ], style={'width': '90%', 'display': 'inline-block', 'color': 'black', 'margin': 'auto'}
@@ -84,6 +88,12 @@ class BarChart():
             self.lable_x = 'Weather Conditions'
         elif xvalue == 'vehicle_manoeuvre':
             self.lable_x= 'Manoeuvre Type'
+        elif xvalue == 'light_conditions':
+            self.lable_x= 'Light conditions'
+        elif xvalue == 'road_surface_conditions':
+            self.lable_x= 'Road surface conditions'
+        elif xvalue == 'special_conditions_at_site':
+            self.lable_x= 'Special conditions at site'
         else :
             xvalue = 'weather_conditions'
             self.lable_x = 'Debug: Weather Conditions'
@@ -105,6 +115,10 @@ class BarChart():
             self.yvalue2 = 'number_of_casualties'
             self.lable_y = 'Average deaths per accident'
             self.agg = 'mean'
+        elif yvalue == 'number_of_casualties_median':
+            self.yvalue2 = 'number_of_casualties'
+            self.lable_y = 'Median deaths per accident'
+            self.agg = 'median'
         else:
             self.yvalue2 = 'accident_index'
             self.lable_y = 'Debug: Total accidents'
