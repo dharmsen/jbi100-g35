@@ -26,7 +26,7 @@ class HeatMap():
                                   {'label': 'Count of accidents', 'value': 'count' }],
                         value='count'
                     ),
-                ], style={'width': '48%', 'display': 'inline-block', 'color': 'black'}
+                ], style={'width': '90%', 'display': 'inline-block', 'color': 'black'}
             ),
             dcc.RangeSlider(
                 id='year_slider',
