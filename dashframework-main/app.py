@@ -320,8 +320,8 @@ def openOptions(value):
     # TO DO implement global filters
     Input('year-filter-global', 'value'),
     
-    Input('xaxis', 'x_select'),
-    Input('yaxis', 'y_select')
+    Input('xaxis', 'value'),
+    Input('yaxis', 'value')
  )
         
  
