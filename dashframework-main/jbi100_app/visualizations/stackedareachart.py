@@ -30,21 +30,39 @@ class StackedAreaChart(html.Div):
         )
 
     def create_dropdown(self):
-        return html.Div(
-            children=[
-                html.H5('Stacked Area Chart controls'),
-                dcc.Dropdown(
-                    id='area_select_dropdown',
-                    style={'height': '10%', 'color': 'black'},
-                    options=[
-                        {'label': 'Weather conditions', 'value': 'weather_conditions'},
-                        {'label': 'Manoeuvre type', 'value': 'vehicle_manoeuvre'}
-                    ],
-                    value=self.color,
-                    clearable=False,
-                    searchable=False
-                )
-            ]
+        # return html.Div(
+            # children=[
+                # html.H5('Stacked Area Chart controls'),
+                # dcc.Dropdown(
+                    # id='area_select_dropdown',
+                    # style={'height': '10%', 'color': 'black'},
+                    # options=[
+                        # {'label': 'Weather conditions', 'value': 'weather_conditions'},
+                        # {'label': 'Manoeuvre type', 'value': 'vehicle_manoeuvre'}
+                    # ],
+                    # value=self.color,
+                    # clearable=False,
+                    # searchable=False
+                # )
+            # ]
+        # )
+        return html.Div([
+            html.H5('Stacked Area Chart controls'),
+            html.Div(                    
+                    dcc.Dropdown(
+                        id='area_select_dropdown',
+                        style={'width': '90%', 'display': 'inline-block', 'color': 'black', 'margin': 'auto'},
+                        options=[
+                            {'label': 'Weather conditions', 'value': 'weather_conditions'},
+                            {'label': 'Manoeuvre type', 'value': 'vehicle_manoeuvre'}
+                        ],
+                        value=self.color,
+                        # clearable=False,
+                        # searchable=False
+                    )
+                
+            )
+            ], style = {'display': 'flex', 'flex-direction': 'column'}
         )
 
     def update(self, column, df):
