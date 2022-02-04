@@ -208,7 +208,7 @@ def generate_about_layout():
                         children=[
                             html.H3('Heatmap Visualization'),
                             html.Img(
-                                src='jbi100_app/assets/heatmapPicture.PNG',
+                                src='/assets/heatmapPicture.PNG',
                                 alt='Image of heatmap',
                                 className='about-image'),
                             html.P(
@@ -308,7 +308,13 @@ def generate_help_layout():
                         id='help-card',
                         children=[
                             html.H3('Heatmap Visualization Help'),
-                            html.P('Some specific help facts for this vis.')
+                            html.P(
+                                'To choose your own year range move the ends of the slider.'
+                                'The default is 1999-2020. To choose your own coloring factor' 
+                                'click on the dropdown menu. The default factor is count of acctidents.'
+                                'To get more info about individual cell, place your mouse on top of it'
+                                'and year, weeknumber and factor values will appear.'
+                                )
                         ]
                     ),
                     html.Div(
