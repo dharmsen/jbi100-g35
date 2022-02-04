@@ -228,22 +228,16 @@ def generate_about_layout():
                     html.Div(
                         id='about-card',
                         children=[
-                            html.H3('Streamgraph Visualization'),
+                            html.H3('Stacked Area Visualization'),
                             html.Img(
-                                src='https://via.placeholder.com/150',
-                                alt='Image of streamgraph',
+                                src='stackedareachart.png',
+                                alt='Image of stacked area chart',
                                 className='about-image'),
                             html.P(
-                                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec fringilla ac sem at '
-                                'accumsan. Nulla ut nibh rutrum, suscipit mauris id, volutpat augue. Fusce laoreet '
-                                'dignissim neque, ut rhoncus dui condimentum a. Integer sed consequat leo, et tempus '
-                                'risus. Fusce suscipit diam tincidunt dolor posuere ultrices. Nullam egestas ac diam in '
-                                'lacinia. Sed eget quam risus. Ut hendrerit, velit eget rutrum condimentum, velit ligula '
-                                'semper nulla, semper efficitur leo elit vel lectus. Quisque vitae bibendum sem. '
-                                'Cras sollicitudin eu risus suscipit rhoncus. Praesent at cursus erat, ac gravida est. '
-                                'Sed gravida nisl id elit feugiat, id tincidunt metus rutrum. In dui nisl, auctor at '
-                                'aliquam sit amet, pretium malesuada dui. Aliquam ultrices consectetur augue convallis '
-                                'interdum.'
+                                'The stacked area chart shows the distribution and amount of accidents between several' 
+                                ' categories over time. The categories are manoeuvre types and weather conditions. This' 
+                                ' visualization can be used to see the general trend and the trend per category over the'
+                                ' course of a timeframe.'
                             )
                         ]
                     ),
