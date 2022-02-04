@@ -408,6 +408,6 @@ li:hover {
 #help-card p {
     text-align: justify;
     text-overflow: clip;
-    width: 300px;
+    width: 80%;
 }
 

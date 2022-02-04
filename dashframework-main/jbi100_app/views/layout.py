@@ -184,22 +184,18 @@ def generate_about_layout():
                     html.Div(
                         id='about-card',
                         children=[
-                            html.H3('Line chart Visualization'),
+                            html.H3('Barchart Visualization'),
                             html.Img(
-                                src='https://via.placeholder.com/150',
-                                alt='Image of line chart',
+                                src='/assets/barPicture.PNG',
+                                alt='Image of bar chart',
                                 className='about-image'),
                             html.P(
-                                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec fringilla ac sem at '
-                                'accumsan. Nulla ut nibh rutrum, suscipit mauris id, volutpat augue. Fusce laoreet '
-                                'dignissim neque, ut rhoncus dui condimentum a. Integer sed consequat leo, et tempus '
-                                'risus. Fusce suscipit diam tincidunt dolor posuere ultrices. Nullam egestas ac diam in '
-                                'lacinia. Sed eget quam risus. Ut hendrerit, velit eget rutrum condimentum, velit ligula '
-                                'semper nulla, semper efficitur leo elit vel lectus. Quisque vitae bibendum sem. '
-                                'Cras sollicitudin eu risus suscipit rhoncus. Praesent at cursus erat, ac gravida est. '
-                                'Sed gravida nisl id elit feugiat, id tincidunt metus rutrum. In dui nisl, auctor at '
-                                'aliquam sit amet, pretium malesuada dui. Aliquam ultrices consectetur augue convallis '
-                                'interdum.'
+                                'A bar-chart makes use of a quantitative and qualitative variable. The bar-chart '
+                                'shows what certain variables have an influence on the amount of accidents, the '
+                                'amount of death in an accident, the average death per accident, and the median '
+                                'death per accident. Variables that could be chosen to see the influence of on these'
+                                ' factors include: weather conditions, manoeuvre types, light conditions, road surface '
+                                'conditions, and special conditions at site.'
                             )
                         ]
                     ),
@@ -293,9 +289,8 @@ def generate_help_layout():
                         id='help-card',
                         children=[
                             html.H3('Barchart Visualization Help'),
-                            html.P('<ul> <li> If you zoom in and the text of the x-axis overlaps with the label of the x-axis, you can pan to solve this.</li>'
-                                    '<li> Am I meant to write here how the bar chart works? </li> '
-                                    '</ul>')
+                            html.P('If you zoom in and the text of the x-axis overlaps with the label of the x-axis, '
+                                   'you can pan to solve this.')
                         ]
                     ),
                     html.Div(
@@ -305,7 +300,7 @@ def generate_help_layout():
                             html.P(
                                 'To choose your own year range move the ends of the slider. '
                                 'The default is 1999-2020. To choose your own coloring factor' 
-                                'click on the dropdown menu. The default factor is count of acctidents. '
+                                'click on the dropdown menu. The default factor is count of accidents. '
                                 'To get more info about individual cell, place your mouse on top of it'
                                 'and year, weeknumber and factor values will appear.'
                                 )
@@ -314,15 +309,30 @@ def generate_help_layout():
                     html.Div(
                         id='help-card',
                         children=[
-                            html.H3('Streamgraph Visualization Help'),
-                            html.P('Some specific help facts for this vis.')
+                            html.H3('Stacked Area Visualization Help'),
+                            html.P('You can hover over each individual area on the chart to get more information. '
+                                   'If you want to look at only particular categories e.g. for weather conditions'
+                                   ' only look at “fine with high winds” you can click to disable all other categories '
+                                   'and only view the one you want. \n Hovering over the filter stacked area chart icon '
+                                   'brings up the controls for this visualization. Here you can change what attribute '
+                                   'the color is encoding. \n You can also click and drag to look at particular areas on '
+                                   'the graph. \n Hovering on the top right corner brings up more controls that are all'
+                                   ' quite self-explanatory. ')
                         ]
                     ),
                     html.Div(
                         id='help-card',
                         children=[
                             html.H3('Map Visualization Help'),
-                            html.P('Some specific help facts for this vis.')
+                            html.P('The map supports panning and zooming. The mouse wheel can be used to zoom in on the'
+                                   ' map. You can hover over the individual data points to bring up more information in'
+                                   ' the form of a tooltip. \n Hovering over the filter map icon brings up the controls'
+                                   ' for this visualization. Here you can select which attributes are encoded as size and'
+                                   ' color. Moreover, you can select a custom year range. However if performance'
+                                   ' capabilities are exceeded you will be notified to change your selection. '
+                                   'The map visualization calculates a safe subset to visualize from the global '
+                                   'year range. So watch out! The map does not show exactly what the global year '
+                                   'range selects! If you need the years exactly use the map’s year range.')
                         ]
                     ),
 
