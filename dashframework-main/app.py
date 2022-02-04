@@ -257,7 +257,6 @@ def openOptions(value):
     # Get channel options for map
     columns = [
             {'label': 'Police Force', 'value': 'police_force'},
-            {'label': 'Accident Severity', 'value': 'accident_severity'},
             {'label': 'Number of Vehicles', 'value': 'number_of_vehicles'},
             {'label': 'Deaths', 'value': 'number_of_casualties'},
             {'label': 'Day of Week', 'value': 'day_of_week'},
