@@ -16,6 +16,8 @@ def generate_control_panel(visId: int, vis):
     controls = 'Please check visualizatoin for controls.'
     if visId == 1:
         controls = vis.get_heatmap_controls()
+    elif visId == 2:
+        controls = vis.generate_controls()
     elif visId == 4:
         controls = vis.create_dropdown()
 
@@ -51,6 +53,7 @@ def generate_global_control_panel(range_filter_global_settings, date_filter_glob
                                 id='year-filter-global',
                                 min=range_filter_global_settings['minYear'],
                                 max=range_filter_global_settings['maxYear'],
+                                tooltip={"placement": "bottom", "always_visible": False},
                                 step=1,
                                 value=[range_filter_global_settings['minYear'],
                                        range_filter_global_settings['maxYear']],
@@ -87,6 +90,7 @@ def generate_global_control_panel(range_filter_global_settings, date_filter_glob
                                     12: {'label': '12:00', 'style': {'color': '#fff'}},
                                     24: {'label': '24:00', 'style': {'color': '#fff'}},
                                 },
+                                tooltip={"placement": "bottom", "always_visible": False},
                                 allowCross=False,
                             ),
 
@@ -98,36 +102,24 @@ def generate_global_control_panel(range_filter_global_settings, date_filter_glob
                         className='container',
                         children=[
                             html.P(className='filter-title-global', children=['No. of Vehicles: ']),
-                            dcc.Slider(
+                            dcc.RangeSlider(
                                 className='filter-global',
                                 id='vehicles-slider-global',
                                 min=1,
-                                max=10,
+                                max=15,
                                 step=1,
-                                value=[1, 10],
+                                value=[1, 15],
                                 marks={
                                     1: {'label': '1', 'style': {'color': '#fff'}},
                                     5: {'label': '5', 'style': {'color': '#fff'}},
-                                    10: {'label': '10+', 'style': {'color': '#fff'}},
+                                    10: {'label': '10', 'style': {'color': '#fff'}},
+                                    15: {'label': '15+', 'style': {'color': '#fff'}},
                                 },
+                                tooltip={"placement": "bottom", "always_visible": False},
                             ),
 
                         ]
                     ),
-
-                    # Date picker
-                    html.Div(
-                        className='container',
-                        children=[
-                            html.P(className='filter-title-global', children=['Dates: ']),
-                            dcc.DatePickerRange(
-                                className='filter-global',
-                                id='date-picker-global',
-                                min_date_allowed=date_filter_global_settings['minDate'],
-                                max_date_allowed=date_filter_global_settings['maxDate'],
-                            ),
-                        ]
-                    )
                 ]
             )
         ]

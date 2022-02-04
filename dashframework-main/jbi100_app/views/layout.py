@@ -208,20 +208,17 @@ def generate_about_layout():
                         children=[
                             html.H3('Heatmap Visualization'),
                             html.Img(
-                                src='https://via.placeholder.com/150',
+                                src='/assets/heatmapPicture.PNG',
                                 alt='Image of heatmap',
                                 className='about-image'),
                             html.P(
-                                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec fringilla ac sem at '
-                                'accumsan. Nulla ut nibh rutrum, suscipit mauris id, volutpat augue. Fusce laoreet '
-                                'dignissim neque, ut rhoncus dui condimentum a. Integer sed consequat leo, et tempus '
-                                'risus. Fusce suscipit diam tincidunt dolor posuere ultrices. Nullam egestas ac diam in '
-                                'lacinia. Sed eget quam risus. Ut hendrerit, velit eget rutrum condimentum, velit ligula '
-                                'semper nulla, semper efficitur leo elit vel lectus. Quisque vitae bibendum sem. '
-                                'Cras sollicitudin eu risus suscipit rhoncus. Praesent at cursus erat, ac gravida est. '
-                                'Sed gravida nisl id elit feugiat, id tincidunt metus rutrum. In dui nisl, auctor at '
-                                'aliquam sit amet, pretium malesuada dui. Aliquam ultrices consectetur augue convallis '
-                                'interdum.'
+                                'The heatmap is built in the style of the yearly calendar. presenting years on'
+                                'they-axis and weeks on the x-axis allows the user to navigate both ways to search'
+                                'for patterns. The visualization has two filters. The range slider for the selection'
+                                'of years is providing the freedom of exploration and in-depth analysis if needed.'
+                                'In addition, the coloring of the heatmap is determined by a second filter - count '
+                                'of an accident or the average speed limit of vehicles from the accidents. Lighter'
+                                'colors indicate a smaller number while the dark ones are close to maximum.'
                             )
                         ]
                     ),
@@ -305,7 +302,13 @@ def generate_help_layout():
                         id='help-card',
                         children=[
                             html.H3('Heatmap Visualization Help'),
-                            html.P('Some specific help facts for this vis.')
+                            html.P(
+                                'To choose your own year range move the ends of the slider.'
+                                'The default is 1999-2020. To choose your own coloring factor' 
+                                'click on the dropdown menu. The default factor is count of acctidents.'
+                                'To get more info about individual cell, place your mouse on top of it'
+                                'and year, weeknumber and factor values will appear.'
+                                )
                         ]
                     ),
                     html.Div(
