@@ -18,6 +18,8 @@ def generate_control_panel(visId: int, vis):
         controls = vis.get_heatmap_controls()
     elif visId == 2:
         controls = vis.generate_controls()
+    elif visId == 3:
+        controls = vis.create_dropdown()
     elif visId == 4:
         controls = vis.create_dropdown()
 

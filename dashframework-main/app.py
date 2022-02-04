@@ -281,6 +281,32 @@ def openOptions(value):
 
     return {'visibility' : 'hidden', 'opacity': '0'}, columns, columns
 
+# Barchart
+
+@app.callback(
+    Output('barchart-graph', 'figure'),
+    #Input = dropdown/ slider etc.
+    
+    # TO DO implement global filters
+    Input('year-filter-global', 'value'),
+    Input('time-filter-global', 'value'),
+    Input('vehicles-slider-global', 'value'),
+    
+    Input('xaxis', 'value'),
+    Input('yaxis', 'value')
+ )
+        
+ 
+def update_barchart(year_range, time_range, vehicle_no, x_select_dropdown, y_select_dropdown):
+    # TODO
+    # Update the df_bar to match the input
+    df_barfilter = df_bar[(df_bar['accident_year'] <= year_range[1]) & (df_bar['accident_year'] >= year_range[0])].copy()
+    df_barfilter = df_barfilter[(df_barfilter['hour_time'] <= time_range[1]) & (df_barfilter['hour_time'] >= time_range[0])].copy()
+    df_barfilter = df_barfilter[(df_barfilter['number_of_vehicles'] <= vehicle_no[1]) & (df_barfilter['number_of_vehicles'] >= vehicle_no[0])].copy()
+    
+    # return the graph with correseponding values
+    return bar.update(x_select_dropdown, y_select_dropdown, df_barfilter)
+
 
 # Global filter callback function
 @app.callback(
