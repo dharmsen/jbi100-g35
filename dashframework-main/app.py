@@ -151,8 +151,8 @@ def do_map(txt, range, time_range, vehicle_no, color_drop, size_drop):
     print(time_range)
     if txt != 'Data points loaded: EXCEEDED':
         # 15 means 15 and more
-        if vehicle_no == 15:
-            vehicle_no = 1000
+        if vehicle_no[1] == 15:
+            vehicle_no[1] = 1000
 
         df_map_filtered = df_map[(df_map['accident_year'] >= range[0]) &
                                  (df_map['accident_year'] <= range[1]) &
@@ -270,6 +270,9 @@ def update_figure(value, color):
 )
 
 def update_stacked_area_chart(area_select_dropdown, year_range, time_range, vehicles_range):
+    if vehicles_range[1] == 15:
+        vehicles_range[1] = 1000
+
     if area_select_dropdown == 'weather_conditions':
         df_merged_area_cond = df_date.join(df_conditions, lsuffix='_date', rsuffix='_conditions').join(df_severity, rsuffix='_sev')
         df_merged_area_cond['hour_time'] = pd.to_datetime(df_merged_area_cond['time'], format='%H:%M').dt.hour
