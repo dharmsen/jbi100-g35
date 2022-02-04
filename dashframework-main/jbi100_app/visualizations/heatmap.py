@@ -7,8 +7,8 @@ from dash import html, dcc
 
 class HeatMap():
     def __init__(self, range_filter_global_settings):
-        self.max_year = range_filter_global_settings['maxYear']
-        self.min_year = range_filter_global_settings['minYear']
+        self.max_year = 2020
+        self.min_year = 1999
 
     def get_heatmap(self):
         return html.Div([
