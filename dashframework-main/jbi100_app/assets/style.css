@@ -370,6 +370,7 @@ li:hover {
     padding: 1rem;
     gap: 3rem;
     justify-content: space-around;
+    align-items: flex-start;
 }
 
 #about-card {

@@ -227,7 +227,7 @@ def generate_about_layout():
                         children=[
                             html.H3('Stacked Area Visualization'),
                             html.Img(
-                                src='stackedareachart.png',
+                                src='/assets/areaPicture.PNG',
                                 alt='Image of stacked area chart',
                                 className='about-image'),
                             html.P(
@@ -243,21 +243,19 @@ def generate_about_layout():
                         children=[
                             html.H3('Map Visualization'),
                             html.Img(
-                                src='https://via.placeholder.com/150',
+                                src='/assets/mapPicture.PNG',
                                 alt='Image of map vis',
                                 className='about-image'
                             ),
                             html.P(
-                                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec fringilla ac sem at '
-                                'accumsan. Nulla ut nibh rutrum, suscipit mauris id, volutpat augue. Fusce laoreet '
-                                'dignissim neque, ut rhoncus dui condimentum a. Integer sed consequat leo, et tempus '
-                                'risus. Fusce suscipit diam tincidunt dolor posuere ultrices. Nullam egestas ac diam in '
-                                'lacinia. Sed eget quam risus. Ut hendrerit, velit eget rutrum condimentum, velit ligula '
-                                'semper nulla, semper efficitur leo elit vel lectus. Quisque vitae bibendum sem. '
-                                'Cras sollicitudin eu risus suscipit rhoncus. Praesent at cursus erat, ac gravida est. '
-                                'Sed gravida nisl id elit feugiat, id tincidunt metus rutrum. In dui nisl, auctor at '
-                                'aliquam sit amet, pretium malesuada dui. Aliquam ultrices consectetur augue convallis '
-                                'interdum.'
+                                'The map visualization visualizes the provided spatial data and allows the user '
+                                'to identify cities and roads with large amounts of accidents. The map supports all'
+                                ' standard interaction techniques like panning and zooming. The user can also hover'
+                                ' over particular accident sites to see more details. Apart from the spatial data, the'
+                                ' map encodes different attributes via color and size of the dots on the map. These '
+                                'attributes can be changed by clicking the options button. To ensure consistent '
+                                'performance the map is limited to rendering under half a million datapoints and the '
+                                'user is informed when this limit is exceeded. '
                             )
                         ]
                     )
