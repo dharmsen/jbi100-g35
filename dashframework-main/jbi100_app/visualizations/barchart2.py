@@ -48,6 +48,17 @@ class BarChart():
         return html.Div([
             html.Div([
                     dcc.Dropdown(
+                        id='yaxis',
+                        options=[ {'label': 'Amount of accidents', 'value': 'accident_index'},
+                                  {'label': 'Total deaths', 'value': 'number_of_casualties' },
+                                  {'label': 'Average deaths per accident', 'value': 'number_of_casualties_mean' },
+                                  {'label': 'Median deaths per accident', 'value': 'number_of_casualties_median' }],
+                        value='accident_index'
+                    ),
+                ], style={'width': '90%', 'display': 'inline-block', 'color': 'black', 'margin': 'auto'}
+            ),
+            html.Div([
+                    dcc.Dropdown(
                         id='xaxis',
                         options=[ {'label': 'Weather conditions', 'value': 'weather_conditions'},
                                   {'label': 'Manoeuvre types', 'value': 'vehicle_manoeuvre' },
@@ -56,17 +67,6 @@ class BarChart():
                                   {'label': 'Special conditions at site', 'value': 'special_conditions_at_site' }],
                         #Default value: weather_conditions          
                         value='weather_conditions'
-                    ),
-                ], style={'width': '90%', 'display': 'inline-block', 'color': 'black', 'margin': 'auto'}
-            ),
-            html.Div([
-                    dcc.Dropdown(
-                        id='yaxis',
-                        options=[ {'label': 'Amount of accidents', 'value': 'accident_index'},
-                                  {'label': 'Total deaths', 'value': 'number_of_casualties' },
-                                  {'label': 'Average deaths per accident', 'value': 'number_of_casualties_mean' },
-                                  {'label': 'Median deaths per accident', 'value': 'number_of_casualties_median' }],
-                        value='accident_index'
                     ),
                 ], style={'width': '90%', 'display': 'inline-block', 'color': 'black', 'margin': 'auto'}
             )

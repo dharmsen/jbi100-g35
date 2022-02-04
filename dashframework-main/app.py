@@ -323,28 +323,18 @@ def openOptions(value):
     Input('year-filter-global', 'value'),
     Input('time-filter-global', 'value'),
     Input('vehicles-slider-global', 'value'),
-    Input('date-picker-global', 'value'),
-    Input('date-picker-global', 'value'),
     
     Input('xaxis', 'value'),
     Input('yaxis', 'value')
  )
         
  
-def update_barchart(year_range, time_range, vehicle_no, start_date, end_date, x_select_dropdown, y_select_dropdown):
+def update_barchart(year_range, time_range, vehicle_no, x_select_dropdown, y_select_dropdown):
     # TODO
     # Update the df_bar to match the input
     df_barfilter = df_bar[(df_bar['accident_year'] <= year_range[1]) & (df_bar['accident_year'] >= year_range[0])].copy()
     df_barfilter = df_barfilter[(df_barfilter['hour_time'] <= time_range[1]) & (df_barfilter['hour_time'] >= time_range[0])].copy()
-    
-    # Can you only select one or multiple vehicles?
-    # So 1-5, or only 1 or 5 involved
-    # df_barfilter = df_barfilter[(df_barfilter['number_of_vehicles'] <= vehicle_no[1]) & (df_barfilter['number_of_vehicles'] >= vehicle_no[0])].copy()
-    
-    # Something goes wrong with comparing string not compatable with <=
-    # df_barfilter = df_barfilter[(df_barfilter['date'] <= end_date) & (df_barfilter['date'] >= start_date)].copy()
-    
-    
+    df_barfilter = df_barfilter[(df_barfilter['number_of_vehicles'] <= vehicle_no[1]) & (df_barfilter['number_of_vehicles'] >= vehicle_no[0])].copy()
     
     # return the graph with correseponding values
     return bar.update(x_select_dropdown, y_select_dropdown, df_barfilter)
