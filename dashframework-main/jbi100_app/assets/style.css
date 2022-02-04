@@ -9,6 +9,7 @@ body {
 #div-inside-span {
     display: flex;
     flex-direction: column;
+    gap: 0.5rem;
     color: black;
 }
 
@@ -186,10 +187,10 @@ li:hover {
     min-height: 100vh;
 }
 
-h5 {
-    color: #2c8cff;
-    font-weight: 300;
-}
+/*h5 {*/
+/*    color: #2c8cff;*/
+/*    font-weight: 300;*/
+/*}*/
 
 #intro {
     margin: 20px 0px;
@@ -251,7 +252,13 @@ h5 {
     width: 100%;
     align-items: center;
     position: relative;
+    color: black;
+}
 
+#map-info-wrapper {
+    display: flex;
+    flex-direction: row;
+    height: 15%;
 }
 
 #map-range-slider {

@@ -6,9 +6,9 @@ from dash import html, dcc
 """
 
 class HeatMap():
-    def __init__(self, min_year, max_year):
-        self.max_year = max_year
-        self.min_year = min_year
+    def __init__(self, range_filter_global_settings):
+        self.max_year = range_filter_global_settings['maxYear']
+        self.min_year = range_filter_global_settings['minYear']
 
     def get_heatmap(self):
         return html.Div([
@@ -19,6 +19,7 @@ class HeatMap():
 
     def get_heatmap_controls(self):
         return html.Div([
+            html.H5('Heatmap controls'),
             html.Div([
                     dcc.Dropdown(
                         id='color',
@@ -27,14 +28,6 @@ class HeatMap():
                         value='count'
                     ),
                 ], style={'width': '48%', 'display': 'inline-block', 'color': 'black'}
-            ),
-            dcc.RangeSlider(
-                id='year_slider',
-                min=self.min_year,
-                max=self.max_year,
-                value=[self.min_year, self.max_year],
-                step=1,
-                tooltip={"placement": "bottom", "always_visible": True}
-            ),
+            )
             ]
         )

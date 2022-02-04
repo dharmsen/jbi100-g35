@@ -84,116 +84,12 @@ class Map_Visualization():
                 dcc.Graph(id='map', style={'height': '100%'},
                           figure=self.fig),
 
-
-
-                # Define controls for map vis in this div
+                # self.generate_controls()
+                # fix CSS here
+                # rows indicator
                 html.Div(
-                    id='map-control-panel',
+                    id='map-info-wrapper',
                     children=[
-                        dcc.RangeSlider(
-                            id='map-range-slider',
-                            min=self.range_filter_global_settings['minYear'],
-                            max=self.range_filter_global_settings['maxYear'],
-                            step=1,
-                            tooltip={"placement": "bottom", "always_visible": True},
-
-                            # TODO: figure out how to only have a max distance of 3 between both handles
-                            marks={
-                                str(self.range_filter_global_settings['minYear']): {'label':
-                                                                                        self.range_filter_global_settings[
-                                                                                            'minYear'],
-                                                                                    'style': {'color': '#000'}},
-                                str(self.range_filter_global_settings['maxYear']): {'label':
-                                                                                        self.range_filter_global_settings[
-                                                                                            'maxYear'],
-                                                                                    'style': {'color': '#000'}},
-                            },
-                            value=[2019, 2020],
-                        ),
-                        # html.Button(
-                        #     'Ok',
-                        #     id='map-ok-button',
-                        #     className='btn btn-primary',
-                        # ),
-                        html.Div(
-                          id='map-tool-tip',
-                          children=['Your current selection exceeds the performance '
-                                    'capabilites of this map. Please make a smaller '
-                                    'choice.']
-                        ),
-                        # Options drop down
-                        html.Div(
-                            id='map-options',
-                            children=[
-                                # <input class="btn btn-primary" type="button" value="Input">
-                                # dcc.Input(
-                                #     id='options-button',
-                                #     className='btn btn-primary',
-                                #     type='button',
-                                #     value='OpenOptions'
-                                # ),
-                                html.Button(
-                                    id='options-button',
-                                    className='btn btn-primary',
-                                    children=[
-                                        html.Div(
-                                            className='button-wrapper',
-                                            children=[
-                                                html.P('Options'),
-                                                html.Img(
-                                                    className='drop-icon',
-                                                    src="/assets/bootstrap-icons-1.7.2/caret-down-square.svg",
-                                                    alt="Drop down icon",
-                                                ),
-                                            ]
-                                        )
-
-                                    ],
-                                ),
-                                html.Div(
-                                    id='map-hidden-panel',
-                                    children=[
-                                        html.P('Choose which channels represent what data'),
-                                        html.Div(
-                                            className='drop-down-label',
-                                            children=[
-                                                html.P('Color: '),
-                                                dcc.Dropdown(
-                                                    id='color-dropdown',
-                                                    options=[
-                                                        # # TODO: fill with options from df
-                                                        # {'label': 'New York City', 'value': 'NYC'},
-                                                        # {'label': 'Montreal', 'value': 'MTL'},
-                                                        # {'label': 'San Francisco', 'value': 'SF'}
-                                                    ],
-                                                    value='number_of_vehicles',
-                                                    style={'width': '100%'}
-                                                )
-                                            ]
-                                        ),
-                                        html.Div(
-                                            className='drop-down-label',
-                                            children=[
-                                                html.P('Size: '),
-                                                dcc.Dropdown(
-                                                    id='size-dropdown',
-                                                    options=[
-                                                        # # TODO: fill with options from df
-                                                        # {'label': 'New York City', 'value': 'NYC'},
-                                                        # {'label': 'Montreal', 'value': 'MTL'},
-                                                        # {'label': 'San Francisco', 'value': 'SF'}
-                                                    ],
-                                                    # default value
-                                                    value='number_of_casualties',
-                                                    style={'width': '100%'}
-                                                )
-                                            ]
-                                        ),
-                                    ]
-                                )
-                            ]
-                        ),
-                        # rows indicator
                         html.Div(
                             id='map-info-panel',
                             children=[
@@ -207,11 +103,11 @@ class Map_Visualization():
                         html.Div(
                             id='loading-wrapper',
                             children=
-                                dcc.Loading(
+                            dcc.Loading(
                                 id="loading-1-1",
                                 type="default",
-                                style={'height': '100%'},
-                                ),
+                                style={'height': '50%'},
+                            ),
                         )
                     ]
                 )
@@ -219,3 +115,91 @@ class Map_Visualization():
         )
 
 
+    def generate_controls(self):
+        # Define controls for map vis in this div
+        return html.Div(children=[html.H5('Map controls'),
+            html.Div(
+            id='map-control-panel',
+            children=[
+                dcc.RangeSlider(
+                    id='map-range-slider',
+                    min=self.range_filter_global_settings['minYear'],
+                    max=self.range_filter_global_settings['maxYear'],
+                    step=1,
+                    tooltip={"placement": "bottom", "always_visible": True},
+
+                    # TODO: figure out how to only have a max distance of 3 between both handles
+                    marks={
+                        str(self.range_filter_global_settings['minYear']): {'label':
+                                                                                self.range_filter_global_settings[
+                                                                                    'minYear'],
+                                                                            'style': {'color': '#fff'}},
+                        str(self.range_filter_global_settings['maxYear']): {'label':
+                                                                                self.range_filter_global_settings[
+                                                                                    'maxYear'],
+                                                                            'style': {'color': '#fff'}},
+                    },
+                    value=[2019, 2020],
+                ),
+                html.Div(
+                  id='map-tool-tip',
+                  children=['Your current selection exceeds the performance '
+                            'capabilites of this map. Please make a smaller '
+                            'choice.']
+                ),
+                # Options drop down
+                html.Div(
+                    id='map-options',
+                    children=[
+                        html.Button(
+                            id='options-button',
+                            className='btn btn-primary',
+                            style={'color': '#fff'},
+                            children=[
+                                html.Div(
+                                    className='button-wrapper',
+                                    children=[
+                                        html.P('Options'),
+                                        html.Img(
+                                            className='drop-icon',
+                                            src="/assets/bootstrap-icons-1.7.2/caret-down-square.svg",
+                                            alt="Drop down icon",
+                                        ),
+                                    ]
+                                )
+                            ],
+                        ),
+                        html.Div(
+                            id='map-hidden-panel',
+                            children=[
+                                html.P('Choose which channels represent what data'),
+                                html.Div(
+                                    className='drop-down-label',
+                                    children=[
+                                        html.P('Color: '),
+                                        dcc.Dropdown(
+                                            id='color-dropdown',
+                                            value='number_of_vehicles',
+                                            style={'width': '100%', 'color': 'black'}
+                                        )
+                                    ]
+                                ),
+                                html.Div(
+                                    className='drop-down-label',
+                                    children=[
+                                        html.P('Size: '),
+                                        dcc.Dropdown(
+                                            id='size-dropdown',
+                                            # default value
+                                            value='number_of_casualties',
+                                            style={'width': '100%', 'color': 'black'}
+                                        )
+                                    ]
+                                ),
+                            ]
+                        )
+                    ]
+                ),
+            ]
+        )
+        ])

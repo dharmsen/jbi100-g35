@@ -85,7 +85,7 @@ grouped = grouped.reset_index()
 simple_barchart = Barchart('accident_year', 'number_of_casualties', grouped)
 
 # Make heat map
-heatmap = HeatMap(df_heatmap['accident_year'].min(), df_heatmap['accident_year'].max())
+heatmap = HeatMap(range_filter_global_settings)
 
 # Make stacked area chart
 df_merged_area_cond = df_date.join(df_conditions, lsuffix='_date', rsuffix='_conditions')
@@ -158,11 +158,6 @@ def compute_size(startYear, endYear):
 
 def check_size_old(startYear, endYear):
     print('Running check_size_old')
-    # total = 0
-    # years = list(range(startYear, endYear+1))
-    # print(years)
-    # for year in years:
-    #     total += yearCount[year]
     years = list(range(startYear, endYear + 1))
     total = compute_size(startYear, endYear)
 
@@ -206,9 +201,9 @@ def check_size_old(startYear, endYear):
     Input('map-range-slider', 'value')
 )
 def slider(value):
-    # FIXME: computation of size here is invalid!!
+    # Size is approx from year counts
     size = compute_size(value[0], value[1])
-    # print("Got: " + str(size))
+
     error_style_font = {'color': 'red'}
     error_style_visibility = {'visibility': 'visible', 'opacity': '1'}
 
@@ -216,13 +211,6 @@ def slider(value):
         return 'Data points loaded: EXCEEDED', error_style_font, error_style_visibility
     else:
         return 'Data points loaded: %s' % size, {}, {}
-    # new_values = check_size_old(value[0], value[1])
-    # message = 'Data points loaded: %s' % new_values[2]
-    #
-    # slider_values = [new_values[0], new_values[1]]
-    # return message, slider_values
-    # # print("fired slider callback")
-    # # return 'wow'
 
 
 # Does actual map computing
@@ -232,18 +220,23 @@ def slider(value):
     Input('map-info', 'children'),
     Input('map-range-slider', 'value'),
     Input('time-filter-global', 'value'),
+    Input('vehicles-slider-global', 'value'),
     Input('color-dropdown', 'value'),
     Input('size-dropdown', 'value'),
-    # Input("loading-input-1-1", "value")
 )
-# Output("loading-output-1", "children"), Input("loading-input-1", "value")
-def do_map(txt, range, time_range, color_drop, size_drop):#, value):
+def do_map(txt, range, time_range, vehicle_no, color_drop, size_drop):
     print(time_range)
     if txt != 'Data points loaded: EXCEEDED':
+        # 15 means 15 and more
+        if vehicle_no == 15:
+            vehicle_no = 1000
+
         df_map_filtered = df_map[(df_map['accident_year'] >= range[0]) &
                                  (df_map['accident_year'] <= range[1]) &
                                  (df_map['hour_time'] >= time_range[0]) &
-                                 (df_map['hour_time'] <= time_range[1])
+                                 (df_map['hour_time'] <= time_range[1]) &
+                                 (df_map['number_of_vehicles'] >= vehicle_no[0]) &
+                                 (df_map['number_of_vehicles'] <= vehicle_no[1])
                                  ]
         print('Updating map!')
 
@@ -279,38 +272,26 @@ def openOptions(value):
     return {'visibility' : 'hidden', 'opacity': '0'}, columns, columns
 
 
-
 # Global filter callback function
 @app.callback(
-    # Output('loading-output-1', 'figure'), # FIXME: temp output
     Output('heatmap-graph', 'figure'), # heatmap output
     Output('map-range-slider', 'value'), # map range updater
     Input('year-filter-global', 'value'),
     Input('time-filter-global', 'value'),
     Input('vehicles-slider-global', 'value'),
-    Input('date-picker-global', 'start_date'),
-    Input('date-picker-global', 'end_date'),
-    Input('year_slider', 'value'),
+    # Input('date-picker-global', 'start_date'),
+    # Input('date-picker-global', 'end_date'),
+    # Input('year_slider', 'value'),
     Input('color', 'value')
 )
-def global_filter(year_range, time_range, vehicle_no, start_date, end_date, heatmap_year, heatmap_color):
-    # print(year_range, time_range, vehicle_no, start_date, end_date)
-
-    # this table takes 2 business days to get rendered
-    # mask = (df_date['accident_year'] >= year_range[0]) & (df_date['accident_year'] <= year_range[1])
-    # df_filtered = df_date[mask]
-
-    # columns = [{"name": i, "id": i} for i in df_filtered.columns]
-    # data = df_filtered.to_dict('records')
-    # return '{}, {}, {}, {}, {}'.format(year_range, time_range, vehicle_no, start_date, end_date)
-
+def global_filter(year_range, time_range, vehicle_no, heatmap_color):
     # global year range is used right now
+    print('hello')
     heatmap = update_figure(year_range, heatmap_color)
 
     map_range = check_size_old(year_range[0], year_range[1])[:2]
 
     return heatmap, map_range
-
 
 # Heatmap updater
 def update_figure(value, color):

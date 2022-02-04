@@ -30,16 +30,21 @@ class StackedAreaChart(html.Div):
         )
 
     def create_dropdown(self):
-        return dcc.Dropdown(
-            id='area_select_dropdown',
-            style={'height': '10%', 'color': 'black'},
-            options=[
-                {'label': 'Weather conditions', 'value': 'weather_conditions'},
-                {'label': 'Manoeuvre type', 'value': 'vehicle_manoeuvre'}
-            ],
-            value=self.color,
-            clearable=False,
-            searchable=False
+        return html.Div(
+            children=[
+                html.H5('Stacked Area Chart'),
+                dcc.Dropdown(
+                    id='area_select_dropdown',
+                    style={'height': '10%', 'color': 'black'},
+                    options=[
+                        {'label': 'Weather conditions', 'value': 'weather_conditions'},
+                        {'label': 'Manoeuvre type', 'value': 'vehicle_manoeuvre'}
+                    ],
+                    value=self.color,
+                    clearable=False,
+                    searchable=False
+                )
+            ]
         )
 
     def update(self, column, df):
