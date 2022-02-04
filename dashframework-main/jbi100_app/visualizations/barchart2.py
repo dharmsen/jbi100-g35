@@ -1,36 +1,24 @@
 import os.path
 
-#Have to figure out which I use and which I dont use
 import plotly.graph_objects as go
 from geojson import load, FeatureCollection
 import plotly.express as px
-from .map_helper import Map_Helper
 from dash import html, dcc
 
 """
     Creates a barchart visualization with built-in options for the x- and y-axis.
 """
 class BarChart():
-    # TODO 
     # apply years on dataframe -> such that it only shows the data of the year range
     # Apply No of vehicles involved on dataframe -> such that it only shows accidents were there were x amount of vehicles involved
 
 
-    # TODO
-    # Figure out what's happening here
     def __init__(self, xvalue, yvalue, df):
-        #self.html_id = 'barchart-graph'
         self.df = df
         self.xvalue = xvalue
         self.yvalue = yvalue
         self.update(self.xvalue, self.yvalue, self.df)
-        
-        # Equivalent to `html.Div([...])`
-        #super().__init__(
-        #    dcc.Graph(id=self.html_id, style={'height': '100%'}),
-        #    style={'height': '100%'}
-        #)
-        
+
     def get_barchart(self):
         return html.Div([
             dcc.Graph(id='barchart-graph', style={'height': '100%'}),
@@ -40,12 +28,11 @@ class BarChart():
 
     
     # Creates the dropdown to choose the value for x- and y-axis
-    # TODO
-    # Create dropdown for y-axis
     # Dropdown y-axis: {amount of accidents/ total amount of deaths/ average death per accident} 
     # Dropdown x-axis: {weather, maneuvres}
     def create_dropdown(self):
         return html.Div([
+            html.H5('Barchart controls'),
             html.Div([
                     dcc.Dropdown(
                         id='yaxis',
@@ -72,16 +59,10 @@ class BarChart():
             )
             ], style = {'display': 'flex', 'flex-direction': 'column'}
         )
-        
-        
-    
-    
-    # TODO
+
+
     # df_bar = df_barfilter
     def update(self, xvalue, yvalue, df_bar):
-        # PROBLEM:
-        # It only shows debug, i.e.xvalue and yvalue are most likely empty and therefore no graph will show up.
-        
         # Giving the x lables corresponding to the xvalue
         # Else is for debug
         if xvalue == 'weather_conditions':
@@ -137,13 +118,5 @@ class BarChart():
             self.fig = px.bar(self.df_groupedbybar,
                             x=xvalue, y=yvalue, title='Barchart',
                             labels={xvalue: self.lable_x, yvalue: self.lable_y})
-        
-        # #Original, this works:
-        # self.df_groupedbybar = df_bar.groupby('vehicle_manoeuvre').agg({'accident_index' : 'count'}).reset_index()    
-        # self.fig = px.bar(self.df_groupedbybar,
-                # x = "vehicle_manoeuvre", y = "accident_index",
-                # labels={'accident_index': 'Total accidents', 'vehicle_manoeuvre': 'Manoeuvres'})
-        
-            
         
         return self.fig

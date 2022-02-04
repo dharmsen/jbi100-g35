@@ -2,13 +2,11 @@ from jbi100_app.main import app
 from jbi100_app.views.menu import make_menu_layout
 from jbi100_app.views.scatterplot import Scatterplot
 from jbi100_app.data import Data
-from jbi100_app.visualizations.barchart import Barchart
 from jbi100_app.visualizations.map import Map_Visualization
 
 from jbi100_app.visualizations.heatmap import HeatMap
 from jbi100_app.visualizations.stackedareachart import StackedAreaChart
 from jbi100_app.visualizations.barchart2 import BarChart
-
 
 from jbi100_app.views.layout import generate_help_layout, generate_about_layout, generate_nav_bar, generate_basic_layout, generate_new_layout
 
@@ -19,45 +17,22 @@ from dash.exceptions import PreventUpdate
 import pandas as pd
 from datetime import date
 
-import dash_leaflet as dl
-
 # Get data by making a data object and getting the required dfs from it.
-# TODO: uncomment data object once in production, currently comment for quicker start up
-# data = Data()
-# df_date, df_conditions, df_location, df_severity = data.get_dataframes()
-
 data = Data()
 
-# FIXME: check imports
 df_date, df_severity, df_conditions, df_location, df_heatmap, df_heatmap_speeds = data.get_dataframes()
-
-
-# FIXME: accident_index col is killing the table
-# df_date.drop('accident_index', inplace=True, axis=1)
 
 # Get filter settings
 range_filter_global_settings = data.get_range_filter_global_settings()
 date_filter_global_settings = data.get_date_filter_global_settings()
 
-df_date_short = df_date.head(100)
-# TODO: do something better with the temp table
-table = html.Div(
-            id='table-wrapper',
-            children=
-            dash_table.DataTable(
-                id='table',
-                style_table={'maxHeight': '250px', 'overflowY' : 'scroll'},
-                #maxHeight otherwise table doesnt respect parent div
-            )
-        )
-
+# Map dataframes
 df_map = df_location.join(df_severity, rsuffix='_b')
 df_map = df_map.join(df_date, rsuffix='_c')
 df_map['hour_time'] = pd.to_datetime(df_map['time'], format='%H:%M').dt.hour
 
 
 # Computes data points per year, used for ensuring not too many data points on map
-
 years = list(df_map.drop_duplicates(subset=['accident_year'])['accident_year'])
 yearCount = {}
 for year in years:
@@ -65,31 +40,17 @@ for year in years:
     yearCount[year] = count
 
 
-# 500,000 nominal performance (probably best to stay here to ensure resources are left for other visualizations)
-# 750,000 not great performance
-# 1mil quite laggy
-# 3.7mil crashes (all rows)
 print('Starting map')
-# TODO configure best starting values
-m = Map_Visualization(df_map[(df_map['accident_year'] >= 2019) & (df_map['accident_year'] <= 2020)], range_filter_global_settings)
+m = Map_Visualization(df_map[(df_map['accident_year'] >= 2019) & (df_map['accident_year'] <= 2020)],
+                      range_filter_global_settings, yearCount)
 map = m.get_map_vis()
 print('Map finished')
 
 
-
-# Make simple barchart vis example
-# Join together for barchart
-df_merged = df_date.join(df_severity, lsuffix='_date', rsuffix='_severity')
-grouped = df_merged.groupby('accident_year').agg({'number_of_casualties': 'mean'})
-grouped = grouped.reset_index()
-
-simple_barchart = Barchart('accident_year', 'number_of_casualties', grouped)
-
-#For the actual used barchart
+# Bar chart
 df_bar = df_conditions.join(df_severity, rsuffix='_b')
 df_bar = df_bar.join(df_date, rsuffix = '_c')
 df_bar['hour_time'] = pd.to_datetime(df_bar['time'], format='%H:%M').dt.hour
-#df_groupedbybar = df_bar.groupby('vehicle_manoeuvre').agg({'accident_index' : 'count'}).reset_index()
 
 bar = BarChart("weather_conditions", "accident_index", df_bar)
 
@@ -106,6 +67,8 @@ grouped_area_manu = df_merged_area_manu.groupby(['accident_year', 'vehicle_manoe
 grouped_area_manu = grouped_area_manu.reset_index(name='count_manoeuvre')
 
 stacked_area_chart = StackedAreaChart('accident_year', 'count_weather', 'weather_conditions', None, grouped_area_cond, 'Weather Conditions')
+
+
 # Declare visualizations
 # vis is a tuple consiting of the visualization itself and the visualization object.
 
@@ -114,7 +77,6 @@ vis1 = (heatmap.get_heatmap(), heatmap)
 vis2 = (map, m)
 
 vis3 = (bar.get_barchart(), bar)
-#vis3 = (dcc.Graph(id='barchart-graph', style={'height': '100%'}), "")
 
 # stacked_area_chart is implemented slightly differently so its technically both.
 vis4 = (stacked_area_chart, stacked_area_chart)
@@ -136,15 +98,15 @@ app.layout = html.Div(
 )
 
 main_page_layout = generate_new_layout(range_filter_global_settings, date_filter_global_settings, vis1, vis2, vis3, vis4)
-#
-#
+
 about_layout = generate_about_layout()
 help_layout = generate_help_layout()
-#
-# Update the index
-@app.callback(Output('vis-main', 'children'),
-              [Input('url', 'pathname')])
 
+# Update the index
+@app.callback(
+    Output('vis-main', 'children'),
+    [Input('url', 'pathname')]
+)
 def display_page(pathname):
     if pathname == '/about':
         return about_layout
@@ -156,54 +118,7 @@ def display_page(pathname):
         # handle not known URL
         return html.H1("Error 404: page not found.", style={'color': 'red'})
 
-
-def compute_size(startYear, endYear):
-    total = 0
-    years = list(range(startYear, endYear + 1))
-    for year in years:
-        total += yearCount[year]
-
-    return total
-
-
-def check_size_old(startYear, endYear):
-    print('Running check_size_old')
-    years = list(range(startYear, endYear + 1))
-    total = compute_size(startYear, endYear)
-
-    # print("Total at start: " + str(total))
-    # If more than 500k reduce by 1 year and check again
-    if total > 500000:
-        # generate flipping pattern to cut list from front and back
-        # cut from 0, -1, 1, -2, 2, -3, 3
-        flipping = []
-        for i in range(0, len(years)):
-            if i == 0:
-                flipping.append(i)
-            else:
-                flipping.append(i*-1)
-                flipping.append(i)
-
-        toRemove = []
-        for i in flipping:
-            if total > 500000:
-                total -= yearCount[years[i]]
-                toRemove.append(years[i])
-            else:
-                break
-
-        # drop excess years
-        for year in toRemove:
-            years.remove(year)
-
-        new_range = [years[0], years[1], total]
-        print(new_range)
-        return new_range
-
-    print([startYear, endYear])
-    return [startYear, endYear, total]
-
-
+# Keeps track of map slider
 @app.callback(
     Output('map-info', 'children'),
     Output('map-info', 'style'),
@@ -212,7 +127,7 @@ def check_size_old(startYear, endYear):
 )
 def slider(value):
     # Size is approx from year counts
-    size = compute_size(value[0], value[1])
+    size = m.compute_size(value[0], value[1])
 
     error_style_font = {'color': 'red'}
     error_style_visibility = {'visibility': 'visible', 'opacity': '1'}
@@ -255,7 +170,7 @@ def do_map(txt, range, time_range, vehicle_no, color_drop, size_drop):
         # prevent update
         raise PreventUpdate
 
-
+# Get channel options for map
 @app.callback(
     Output('map-hidden-panel', 'style'),
     Output('color-dropdown', 'options'),
@@ -263,8 +178,6 @@ def do_map(txt, range, time_range, vehicle_no, color_drop, size_drop):
     Input('options-button', 'n_clicks')
 )
 def openOptions(value):
-
-    # Get channel options for map
     columns = [
             {'label': 'Police Force', 'value': 'police_force'},
             {'label': 'Number of Vehicles', 'value': 'number_of_vehicles'},
@@ -280,8 +193,8 @@ def openOptions(value):
 
     return {'visibility' : 'hidden', 'opacity': '0'}, columns, columns
 
-# Barchart
 
+# Barchart
 @app.callback(
     Output('barchart-graph', 'figure'),
     #Input = dropdown/ slider etc.
@@ -297,7 +210,6 @@ def openOptions(value):
         
  
 def update_barchart(year_range, time_range, vehicle_no, x_select_dropdown, y_select_dropdown):
-    # TODO
     # Update the df_bar to match the input
     df_barfilter = df_bar[(df_bar['accident_year'] <= year_range[1]) & (df_bar['accident_year'] >= year_range[0])].copy()
     df_barfilter = df_barfilter[(df_barfilter['hour_time'] <= time_range[1]) & (df_barfilter['hour_time'] >= time_range[0])].copy()
@@ -314,17 +226,13 @@ def update_barchart(year_range, time_range, vehicle_no, x_select_dropdown, y_sel
     Input('year-filter-global', 'value'),
     Input('time-filter-global', 'value'),
     Input('vehicles-slider-global', 'value'),
-    # Input('date-picker-global', 'start_date'),
-    # Input('date-picker-global', 'end_date'),
-    # Input('year_slider', 'value'),
     Input('color', 'value')
 )
 def global_filter(year_range, time_range, vehicle_no, heatmap_color):
     # global year range is used right now
-    print('hello')
     heatmap = update_figure(year_range, heatmap_color)
 
-    map_range = check_size_old(year_range[0], year_range[1])[:2]
+    map_range = m.check_size_old(year_range[0], year_range[1])[:2]
 
     return heatmap, map_range
 

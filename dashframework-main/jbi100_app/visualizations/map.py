@@ -1,18 +1,22 @@
 import os.path
 
 import plotly.graph_objects as go
-from geojson import load, FeatureCollection
 import plotly.express as px
-from .map_helper import Map_Helper
 from dash import html, dcc
 
 
 """
     Creates a map visualization with built-in year slider to limit data points.
+    
+    Performance notes:
+    500,000 nominal performance (probably best to stay here to ensure resources are left for other visualizations)
+    750,000 not great performance
+    1mil quite laggy
+    3.7mil crashes (all rows)
 """
 class Map_Visualization():
 
-    def __init__(self, data, range_filter_global_settings):
+    def __init__(self, data, range_filter_global_settings, yearCount):
         # TODO: set this as a global variable
         DATA_PATH = 'jbi100_app/assets/data/'
 
@@ -24,6 +28,8 @@ class Map_Visualization():
         # create figure
         self.fig = self.create_figure(data, 'number_of_vehicles', 'number_of_casualties')
         self.range_filter_global_settings = range_filter_global_settings
+
+        self.yearCount = yearCount
 
 
     def create_figure(self, data, color, size):
@@ -203,3 +209,46 @@ class Map_Visualization():
             ]
         )
         ])
+
+
+    def check_size_old(self, startYear, endYear):
+        years = list(range(startYear, endYear + 1))
+        total = self.compute_size(startYear, endYear)
+
+        # print("Total at start: " + str(total))
+        # If more than 500k reduce by 1 year and check again
+        if total > 500000:
+            # generate flipping pattern to cut list from front and back
+            # cut from 0, -1, 1, -2, 2, -3, 3
+            flipping = []
+            for i in range(0, len(years)):
+                if i == 0:
+                    flipping.append(i)
+                else:
+                    flipping.append(i * -1)
+                    flipping.append(i)
+
+            toRemove = []
+            for i in flipping:
+                if total > 500000:
+                    total -= self.yearCount[years[i]]
+                    toRemove.append(years[i])
+                else:
+                    break
+
+            # drop excess years
+            for year in toRemove:
+                years.remove(year)
+
+            new_range = [years[0], years[1], total]
+            return new_range
+
+        return [startYear, endYear, total]
+
+    def compute_size(self, startYear, endYear):
+        total = 0
+        years = list(range(startYear, endYear + 1))
+        for year in years:
+            total += self.yearCount[year]
+
+        return total

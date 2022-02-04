@@ -32,7 +32,7 @@ class StackedAreaChart(html.Div):
     def create_dropdown(self):
         return html.Div(
             children=[
-                html.H5('Stacked Area Chart'),
+                html.H5('Stacked Area Chart controls'),
                 dcc.Dropdown(
                     id='area_select_dropdown',
                     style={'height': '10%', 'color': 'black'},
