@@ -267,14 +267,46 @@ def update_figure(value, color):
 # Stacked bar chart
 @app.callback(
     Output('stacked-area-chart', 'figure'),
+    Input('area_select_dropdown', 'value'),
     Input('year-filter-global', 'value'),
-    Input('area_select_dropdown', 'value')
+    Input('time-filter-global', 'value'),
+    Input('vehicles-slider-global', 'value'),
 )
 
-def update_stacked_area_chart(value, area_select_dropdown):
+def update_stacked_area_chart(area_select_dropdown, year_range, time_range, vehicles_range):
     if area_select_dropdown == 'weather_conditions':
+        df_merged_area_cond = df_date.join(df_conditions, lsuffix='_date', rsuffix='_conditions').join(df_severity, rsuffix='_sev')
+        df_merged_area_cond['hour_time'] = pd.to_datetime(df_merged_area_cond['time'], format='%H:%M').dt.hour
+
+        # filter
+        df_merged_area_cond = df_merged_area_cond[(df_merged_area_cond['accident_year'] >= year_range[0]) &
+                                                  (df_merged_area_cond['accident_year'] <= year_range[1]) &
+                                                  (df_merged_area_cond['hour_time'] >= time_range[0]) &
+                                                  (df_merged_area_cond['hour_time'] <= time_range[1]) &
+                                                  (df_merged_area_cond['number_of_vehicles'] >= vehicles_range[0]) &
+                                                  (df_merged_area_cond['number_of_vehicles'] <= vehicles_range[1])
+                                                  ]
+
+        grouped_area_cond = df_merged_area_cond.groupby(['accident_year', 'weather_conditions']).size()
+        grouped_area_cond = grouped_area_cond.reset_index(name='count_weather')
+
         return stacked_area_chart.update(area_select_dropdown, grouped_area_cond)
     elif area_select_dropdown == 'vehicle_manoeuvre':
+        df_merged_area_manu = df_date.join(df_severity, lsuffix='_date', rsuffix='_severity').join(df_severity, rsuffix='_sev')
+        df_merged_area_manu['hour_time'] = pd.to_datetime(df_merged_area_manu['time'], format='%H:%M').dt.hour
+
+        # filter
+        df_merged_area_manu = df_merged_area_manu[(df_merged_area_manu['accident_year'] >= year_range[0]) &
+                                                  (df_merged_area_manu['accident_year'] <= year_range[1]) &
+                                                  (df_merged_area_manu['hour_time'] >= time_range[0]) &
+                                                  (df_merged_area_manu['hour_time'] <= time_range[1]) &
+                                                  (df_merged_area_manu['number_of_vehicles'] >= vehicles_range[0]) &
+                                                  (df_merged_area_manu['number_of_vehicles'] <= vehicles_range[1])
+                                                  ]
+
+        grouped_area_manu = df_merged_area_manu.groupby(['accident_year', 'vehicle_manoeuvre']).size()
+        grouped_area_manu = grouped_area_manu.reset_index(name='count_manoeuvre')
+
         return stacked_area_chart.update(area_select_dropdown, grouped_area_manu)
 
 
