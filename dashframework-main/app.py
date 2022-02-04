@@ -37,7 +37,7 @@ for year in years:
     count = df_map[df_map['accident_year'] == year]['accident_year'].count()
     yearCount[year] = count
 
-
+# Create geo map
 print('Starting map')
 m = Map_Visualization(df_map[(df_map['accident_year'] >= 2019) & (df_map['accident_year'] <= 2020)],
                       range_filter_global_settings, yearCount)
@@ -95,8 +95,8 @@ app.layout = html.Div(
     ],
 )
 
+# create page content
 main_page_layout = generate_new_layout(range_filter_global_settings, date_filter_global_settings, vis1, vis2, vis3, vis4)
-
 about_layout = generate_about_layout()
 help_layout = generate_help_layout()
 

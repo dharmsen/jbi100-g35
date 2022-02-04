@@ -131,10 +131,7 @@ class Data:
             self.df_conditions_nomap = self.df_nonull[
                 ['accident_index', 'light_conditions', 'weather_conditions', 'road_surface_conditions',
                  'special_conditions_at_site']]
-            # self.df_conditions = self.df_conditions_nomap.replace({'weather_conditions': self.weather_dic ,
-                                                                    # 'light_conditions': self.light_dic ,
-                                                                    # 'road_surface_conditions': self.roadsurface_dic ,
-                                                                    # 'special_conditions_at_site': self.specialconditions_dic})
+
             self.df_conditions = self.df_conditions_nomap.replace({'weather_conditions': self.weather_dic})
             self.df_conditions = self.df_conditions.replace({'light_conditions': self.light_dic})
             self.df_conditions = self.df_conditions.replace({'road_surface_conditions': self.roadsurface_dic})

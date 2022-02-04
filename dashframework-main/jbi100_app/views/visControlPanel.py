@@ -3,15 +3,11 @@ from jbi100_app.main import app
 from dash.dependencies import Input, Output
 from datetime import date
 
-# from jbi100_app.visualizations.heatmap import HeatMap
-# from jbi100_app.visualizations.stackedareachart import StackedAreaChart
-
 # Stores visualization control panels that pop up when user hovers over vis icons.
 
 # Generates the control panel that appears when user hovers over vis icons.
 def generate_control_panel(visId: int, vis):
-    # TODO: add custom behaviour depending on visId
-
+    #
     # Not the best since hardcoding each position for each vis
     controls = 'Please check visualization for controls.'
     if visId == 1:

@@ -17,13 +17,7 @@ from dash import html, dcc
 class Map_Visualization():
 
     def __init__(self, data, range_filter_global_settings, yearCount):
-        # TODO: set this as a global variable
         DATA_PATH = 'jbi100_app/assets/data/'
-
-        # TODO: decide if will use other map type with geojson
-        # Check if geojson file exists
-        # if (os.path.exists(DATA_PATH + 'mapData.geojson'))
-        # geojson = Map_Helper(data)
 
         # create figure
         self.fig = self.create_figure(data, 'number_of_vehicles', 'number_of_casualties')
@@ -59,6 +53,7 @@ class Map_Visualization():
 
         return fig
 
+    # updates figure and sets map style
     def update_fig(self, fig):
         fig.update_layout(
             mapbox_style="open-street-map",
@@ -69,29 +64,14 @@ class Map_Visualization():
 
     """
         Returns div containing map vis with built in year slider.
-        This vis has a seperate year slider to improve performance.
+        This vis has a separate year slider to improve performance.
     """
     def get_map_vis(self):
         return html.Div(
             id='map-container',
             children=[
-                # dummy input to have loading screen
-                # dcc.Input(id="loading-input-1-1",
-                #           value='Input triggers local spinner',
-                #           style={'visibility': 'hidden',
-                #                  'position': 'absolute'}),
-                # dcc.Loading(
-                #     id="loading-1-1",
-                #     type="default",
-                #     style={'height': '100%'},
-                #     children=dcc.Graph(id='map', style={'height': '100%'},
-                #                        figure=self.fig),
-                # ),
                 dcc.Graph(id='map', style={'height': '100%'},
                           figure=self.fig),
-
-                # self.generate_controls()
-                # fix CSS here
                 # rows indicator
                 html.Div(
                     id='map-info-wrapper',
@@ -120,7 +100,7 @@ class Map_Visualization():
             ]
         )
 
-
+    # generates control panel
     def generate_controls(self):
         # Define controls for map vis in this div
         return html.Div(children=[html.H5('Map controls'),
@@ -210,7 +190,7 @@ class Map_Visualization():
         )
         ])
 
-
+    # computes subset of years to meet data point limit if the limit is exceeded
     def check_size_old(self, startYear, endYear):
         years = list(range(startYear, endYear + 1))
         total = self.compute_size(startYear, endYear)
@@ -245,6 +225,7 @@ class Map_Visualization():
 
         return [startYear, endYear, total]
 
+    # checks data point amount in selected range
     def compute_size(self, startYear, endYear):
         total = 0
         years = list(range(startYear, endYear + 1))

@@ -3,7 +3,7 @@ import plotly.express as px
 
 
 """"
-    Creates a barchart.
+    Creates a stacked area chart.
 """
 
 class StackedAreaChart(html.Div):
@@ -29,23 +29,8 @@ class StackedAreaChart(html.Div):
             )
         )
 
+    # create the dropdowns for control
     def create_dropdown(self):
-        # return html.Div(
-            # children=[
-                # html.H5('Stacked Area Chart controls'),
-                # dcc.Dropdown(
-                    # id='area_select_dropdown',
-                    # style={'height': '10%', 'color': 'black'},
-                    # options=[
-                        # {'label': 'Weather conditions', 'value': 'weather_conditions'},
-                        # {'label': 'Manoeuvre type', 'value': 'vehicle_manoeuvre'}
-                    # ],
-                    # value=self.color,
-                    # clearable=False,
-                    # searchable=False
-                # )
-            # ]
-        # )
         return html.Div([
             html.H5('Stacked Area Chart controls'),
             html.Div(                    
@@ -57,14 +42,12 @@ class StackedAreaChart(html.Div):
                             {'label': 'Manoeuvre type', 'value': 'vehicle_manoeuvre'}
                         ],
                         value=self.color,
-                        # clearable=False,
-                        # searchable=False
                     )
-                
             )
             ], style = {'display': 'flex', 'flex-direction': 'column'}
         )
 
+    # update vis
     def update(self, column, df):
         if column == 'weather_conditions':
             self.feature_y = 'count_weather'
