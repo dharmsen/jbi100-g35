@@ -289,8 +289,16 @@ def generate_help_layout():
                         id='help-card',
                         children=[
                             html.H3('Barchart Visualization Help'),
-                            html.P('If you zoom in and the text of the x-axis overlaps with the label of the x-axis, '
-                                   'you can pan to solve this.')
+                            html.P('On the left side you can choose filters for the y- and x-axis. The one option on '
+                                   'top is for the y-axis, and the option beneath that is for the x-axis. You can zoom '
+                                   'in, through selecting the button "zoom" and dragging with your mouse over the area '
+                                   'that you want to zoom in. You can also zoom in through clicking on the button'
+                                   ' "zoom in" and zoom out through clicking on the button "zoom out". Autoscale '
+                                   'returns the image to its original start position. You can hover over the bars to'
+                                   ' get more exact information about the bar. E.g. weather type x has y total deaths.'
+                                   ' At times a known error with the rendering engine can occur: if you zoom in and the '
+                                   'text of the x-axis overlaps with the label of the x-axis. To solve this simply pan '
+                                   'somewhere on the chart.')
                         ]
                     ),
                     html.Div(
