@@ -13,11 +13,13 @@ def generate_control_panel(visId: int, vis):
     # TODO: add custom behaviour depending on visId
 
     # Not the best since hardcoding each position for each vis
-    controls = 'Please check visualizatoin for controls.'
+    controls = 'Please check visualization for controls.'
     if visId == 1:
         controls = vis.get_heatmap_controls()
     elif visId == 2:
         controls = vis.generate_controls()
+    elif visId == 3:
+        controls = vis.create_dropdown()
     elif visId == 4:
         controls = vis.create_dropdown()
 

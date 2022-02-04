@@ -7,6 +7,7 @@ from jbi100_app.visualizations.map import Map_Visualization
 
 from jbi100_app.visualizations.heatmap import HeatMap
 from jbi100_app.visualizations.stackedareachart import StackedAreaChart
+from jbi100_app.visualizations.barchart2 import BarChart
 
 
 from jbi100_app.views.layout import generate_help_layout, generate_about_layout, generate_nav_bar, generate_basic_layout, generate_new_layout
@@ -84,6 +85,14 @@ grouped = grouped.reset_index()
 
 simple_barchart = Barchart('accident_year', 'number_of_casualties', grouped)
 
+#For the actual used barchart
+df_bar = df_conditions.join(df_severity, rsuffix='_b')
+df_bar = df_bar.join(df_date, rsuffix = '_c')
+df_bar['hour_time'] = pd.to_datetime(df_bar['time'], format='%H:%M').dt.hour
+#df_groupedbybar = df_bar.groupby('vehicle_manoeuvre').agg({'accident_index' : 'count'}).reset_index()
+
+bar = BarChart("weather_conditions", "accident_index", df_bar)
+
 # Make heat map
 heatmap = HeatMap(range_filter_global_settings)
 
@@ -104,7 +113,8 @@ vis1 = (heatmap.get_heatmap(), heatmap)
 
 vis2 = (map, m)
 
-vis3 = ('vis3', 'obj')
+vis3 = (bar.get_barchart(), bar)
+#vis3 = (dcc.Graph(id='barchart-graph', style={'height': '100%'}), "")
 
 # stacked_area_chart is implemented slightly differently so its technically both.
 vis4 = (stacked_area_chart, stacked_area_chart)
@@ -269,6 +279,32 @@ def openOptions(value):
             return {'visibility': 'visible', 'opacity': '1'}, columns, columns
 
     return {'visibility' : 'hidden', 'opacity': '0'}, columns, columns
+
+# Barchart
+
+@app.callback(
+    Output('barchart-graph', 'figure'),
+    #Input = dropdown/ slider etc.
+    
+    # TO DO implement global filters
+    Input('year-filter-global', 'value'),
+    Input('time-filter-global', 'value'),
+    Input('vehicles-slider-global', 'value'),
+    
+    Input('xaxis', 'value'),
+    Input('yaxis', 'value')
+ )
+        
+ 
+def update_barchart(year_range, time_range, vehicle_no, x_select_dropdown, y_select_dropdown):
+    # TODO
+    # Update the df_bar to match the input
+    df_barfilter = df_bar[(df_bar['accident_year'] <= year_range[1]) & (df_bar['accident_year'] >= year_range[0])].copy()
+    df_barfilter = df_barfilter[(df_barfilter['hour_time'] <= time_range[1]) & (df_barfilter['hour_time'] >= time_range[0])].copy()
+    df_barfilter = df_barfilter[(df_barfilter['number_of_vehicles'] <= vehicle_no[1]) & (df_barfilter['number_of_vehicles'] >= vehicle_no[0])].copy()
+    
+    # return the graph with correseponding values
+    return bar.update(x_select_dropdown, y_select_dropdown, df_barfilter)
 
 
 # Global filter callback function

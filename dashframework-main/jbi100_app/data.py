@@ -76,6 +76,43 @@ class Data:
                 9 : "Unknown"
             }
 
+            self.light_dic = {
+                -1 : "Data missing or out of range",
+                1 : "Daylight - street lights present",
+                2 : "Daylight - no street lighting",
+                3 : "Daylight - street lightning unknown",
+                4 : "Darkness - lights lit",
+                5 : "Darkness - lights unlit",
+                6 : "Darkness - no lighting",
+                7 : "Darkness - lighting unknown"                
+            }
+
+            self.roadsurface_dic = {
+                -1 : "Data missing or out of range",
+                1 : "Dry",
+                2 : "Wet or damp",
+                3 : "Snow",
+                4 : "Frost or ice",
+                5 : "Flood over 3cm. deep",
+                6 : "Oil or diesel",
+                7 : "Mud",
+                9 : "unknown (self reported)"
+            }
+
+            self.specialconditions_dic = {
+                -1 : "Data missing or out of range",
+                0 : "None",
+                1 : "Auto traffic signal - out",
+                2 : "Auto signal part defective",
+                3 : "Road sign or marking defective or obscured",
+                4 : "Roadworks",
+                5 : "Road surface defective",
+                6 : "Oil or diesel",
+                7 : "Mud",
+                9 : "unknown (self reported)"
+            }
+
+
             self.df_accidents = pd.read_csv(DATA_PATH +
                                   'dft-road-casualty-statistics-accident-1979-2020.csv')
             self.df_vehicle = pd.read_csv(DATA_PATH + 
@@ -94,7 +131,14 @@ class Data:
             self.df_conditions_nomap = self.df_nonull[
                 ['accident_index', 'light_conditions', 'weather_conditions', 'road_surface_conditions',
                  'special_conditions_at_site']]
+            # self.df_conditions = self.df_conditions_nomap.replace({'weather_conditions': self.weather_dic ,
+                                                                    # 'light_conditions': self.light_dic ,
+                                                                    # 'road_surface_conditions': self.roadsurface_dic ,
+                                                                    # 'special_conditions_at_site': self.specialconditions_dic})
             self.df_conditions = self.df_conditions_nomap.replace({'weather_conditions': self.weather_dic})
+            self.df_conditions = self.df_conditions.replace({'light_conditions': self.light_dic})
+            self.df_conditions = self.df_conditions.replace({'road_surface_conditions': self.roadsurface_dic})
+            self.df_conditions = self.df_conditions.replace({'special_conditions_at_site': self.specialconditions_dic})
 
             self.df_severity_nomap = self.df_nonull[
                 ['accident_index', 'police_force', 'accident_severity', 'number_of_vehicles', 'number_of_casualties', 'vehicle_manoeuvre']]

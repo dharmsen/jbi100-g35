@@ -292,8 +292,10 @@ def generate_help_layout():
                     html.Div(
                         id='help-card',
                         children=[
-                            html.H3('Line chart Visualization Help'),
-                            html.P('Some specific help facts for this vis.')
+                            html.H3('Barchart Visualization Help'),
+                            html.P('<ul> <li> If you zoom in and the text of the x-axis overlaps with the label of the x-axis, you can pan to solve this.</li>'
+                                    '<li> Am I meant to write here how the bar chart works? </li> '
+                                    '</ul>')
                         ]
                     ),
                     html.Div(
