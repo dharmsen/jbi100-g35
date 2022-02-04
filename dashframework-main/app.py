@@ -1,6 +1,4 @@
 from jbi100_app.main import app
-from jbi100_app.views.menu import make_menu_layout
-from jbi100_app.views.scatterplot import Scatterplot
 from jbi100_app.data import Data
 from jbi100_app.visualizations.map import Map_Visualization
 
@@ -198,8 +196,6 @@ def openOptions(value):
 @app.callback(
     Output('barchart-graph', 'figure'),
     #Input = dropdown/ slider etc.
-    
-    # TO DO implement global filters
     Input('year-filter-global', 'value'),
     Input('time-filter-global', 'value'),
     Input('vehicles-slider-global', 'value'),
